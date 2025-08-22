@@ -1,0 +1,2774 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberScan Pro - Advanced OSINT & Security Analysis Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0a0e27;
+            --secondary-bg: #1a1f3a;
+            --accent-bg: #2d3748;
+            --surface-bg: #1e2432;
+            --border-color: #2d3748;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --accent-blue: #4fd1c7;
+            --accent-purple: #9f7aea;
+            --accent-red: #fc8181;
+            --accent-green: #68d391;
+            --accent-yellow: #f6e05e;
+            --accent-orange: #ed8936;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #4fd1c7 0%, #9f7aea 100%);
+            --gradient-danger: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, rgba(79, 209, 199, 0.1) 0%, rgba(159, 122, 234, 0.1) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23667eea" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>') no-repeat top center;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo i {
+            font-size: 3rem;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(79, 209, 199, 0.1);
+            border: 1px solid var(--accent-blue);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: var(--accent-blue);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Scan Section */
+        .scan-section {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-secondary);
+        }
+
+        .scan-form {
+            display: flex;
+            gap: 1rem;
+            align-items: stretch;
+            margin-bottom: 2rem;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            z-index: 2;
+        }
+
+        .scan-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: var(--surface-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .scan-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(79, 209, 199, 0.1);
+        }
+
+        .scan-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .scan-btn {
+            padding: 1rem 2rem;
+            background: var(--gradient-secondary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .scan-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .scan-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 2rem 0;
+            display: none;
+        }
+
+        .progress-wrapper {
+            background: var(--surface-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: var(--accent-bg);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-secondary);
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .progress-text {
+            font-weight: 600;
+        }
+
+        /* Results Container */
+        .results-container {
+            display: none;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: var(--surface-bg);
+            border-radius: 16px 16px 0 0;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 1.25rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-secondary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-tab.active {
+            color: var(--accent-blue);
+            background: rgba(79, 209, 199, 0.05);
+        }
+
+        .nav-tab.active::before {
+            transform: scaleX(1);
+        }
+
+        .nav-tab:hover {
+            color: var(--accent-blue);
+            background: rgba(79, 209, 199, 0.05);
+        }
+
+        .nav-tab i {
+            font-size: 1.1rem;
+        }
+
+        /* Content Panels */
+        .tab-content {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 16px 16px;
+            padding: 2rem;
+            min-height: 400px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content h3 {
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Host Results */
+        .host-result {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .host-result:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .host-header {
+            background: var(--accent-bg);
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .host-header:hover {
+            background: rgba(79, 209, 199, 0.1);
+        }
+
+        .host-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .host-ip {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .expand-icon {
+            color: var(--accent-blue);
+            transition: transform 0.3s ease;
+        }
+
+        .host-content {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-section {
+            background: rgba(79, 209, 199, 0.05);
+            border: 1px solid rgba(79, 209, 199, 0.2);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+
+        .info-section h4 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-section h4 i {
+            font-size: 1.2rem;
+        }
+
+        .info-item {
+            background: var(--secondary-bg);
+            padding: 1rem;
+            margin: 0.75rem 0;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .info-item.critical {
+            border-left-color: var(--accent-red);
+            background: rgba(252, 129, 129, 0.05);
+        }
+
+        .info-item.high {
+            border-left-color: var(--accent-orange);
+            background: rgba(237, 137, 54, 0.05);
+        }
+
+        .info-item.medium {
+            border-left-color: var(--accent-yellow);
+            background: rgba(246, 224, 94, 0.05);
+        }
+
+        .info-item.low {
+            border-left-color: var(--accent-green);
+            background: rgba(104, 211, 145, 0.05);
+        }
+
+        /* Status Indicators */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-open {
+            background: rgba(104, 211, 145, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .status-closed {
+            background: rgba(252, 129, 129, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        /* Web Accessibility Info */
+        .web-info {
+            background: rgba(159, 122, 234, 0.1);
+            border: 1px solid rgba(159, 122, 234, 0.3);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* Directory Results */
+        .directory-results {
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .directory-item {
+            background: var(--primary-bg);
+            margin: 0.5rem 0;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border-left: 3px solid var(--text-secondary);
+        }
+
+        .directory-item.risk-high {
+            border-left-color: var(--accent-red);
+            background: rgba(252, 129, 129, 0.05);
+        }
+
+        .directory-item.risk-medium {
+            border-left-color: var(--accent-yellow);
+            background: rgba(246, 224, 94, 0.05);
+        }
+
+        .directory-item.risk-low {
+            border-left-color: var(--accent-green);
+            background: rgba(104, 211, 145, 0.05);
+        }
+
+        .directory-url {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+
+        .directory-url:hover {
+            text-decoration: underline;
+        }
+
+        /* AI Analysis Specific Styles */
+        .risk-dashboard {
+            background: var(--gradient-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .risk-dashboard::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .risk-score-large {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 1rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .risk-level-text {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .analysis-section {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .analysis-section h4 {
+            color: var(--accent-blue);
+            margin-bottom: 1.25rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .analysis-section h4 i {
+            font-size: 1.3rem;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(79, 209, 199, 0.2);
+            border-top: 4px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Executive Summary */
+        .executive-summary {
+            background: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .scan-form {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                overflow-x: auto;
+            }
+            
+            .nav-tab {
+                min-width: 120px;
+            }
+
+            .risk-score-large {
+                font-size: 3rem;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface-bg);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(79, 209, 199, 0.8);
+        }
+
+        /* Utility Classes */
+        .text-critical { color: var(--accent-red); }
+        .text-high { color: var(--accent-orange); }
+        .text-medium { color: var(--accent-yellow); }
+        .text-low { color: var(--accent-green); }
+        .text-info { color: var(--accent-blue); }
+
+        .bg-critical { background: rgba(252, 129, 129, 0.1); }
+        .bg-high { background: rgba(237, 137, 54, 0.1); }
+        .bg-medium { background: rgba(246, 224, 94, 0.1); }
+        .bg-low { background: rgba(104, 211, 145, 0.1); }
+        .bg-info { background: rgba(79, 209, 199, 0.1); }
+
+        /* Project Management Styles */
+        .project-section {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .project-header h2 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .project-header h2 i {
+            color: var(--accent-blue);
+        }
+
+        .project-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .project-select {
+            min-width: 250px;
+            padding: 0.75rem 1rem;
+            background: var(--surface-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .project-select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(79, 209, 199, 0.1);
+        }
+
+        .project-select option {
+            background: var(--surface-bg);
+            color: var(--text-primary);
+        }
+
+        .project-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .project-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .project-btn.secondary {
+            background: var(--accent-bg);
+            color: var(--text-primary);
+        }
+
+        .project-btn.secondary:hover {
+            background: var(--border-color);
+        }
+
+        .project-info {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .project-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .project-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .stat-item i {
+            color: var(--accent-blue);
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h3 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--accent-red);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--surface-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .color-picker {
+            width: 50px;
+            height: 40px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .color-picker:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-cancel {
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-bg);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: var(--border-color);
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Project Manager Styles */
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .project-item {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .project-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .project-item-info {
+            flex: 1;
+        }
+
+        .project-item-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .project-item-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .project-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: rgba(79, 209, 199, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .btn-edit:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-delete {
+            background: rgba(252, 129, 129, 0.2);
+            color: var(--accent-red);
+        }
+
+        .btn-delete:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .project-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .project-actions {
+                justify-content: stretch;
+            }
+            
+            .project-select {
+                min-width: auto;
+                flex: 1;
+            }
+            
+            .project-stats {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+
+        /* Scan Input Mode Styles */
+        .scan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .scan-header h3 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0;
+        }
+
+        .scan-header h3 i {
+            color: var(--accent-blue);
+        }
+
+        .input-mode-toggle {
+            display: flex;
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.25rem;
+        }
+
+        .mode-btn {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .mode-btn:hover {
+            color: var(--accent-blue);
+            background: rgba(79, 209, 199, 0.1);
+        }
+
+        .mode-btn.active {
+            background: var(--gradient-secondary);
+            color: white;
+        }
+
+        .mode-btn i {
+            font-size: 1rem;
+        }
+
+        .input-mode {
+            margin-bottom: 2rem;
+        }
+
+        /* Bulk Input Styles */
+        .bulk-input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .bulk-textarea-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .bulk-label {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bulk-label i {
+            color: var(--accent-blue);
+        }
+
+        .bulk-textarea {
+            width: 100%;
+            min-height: 150px;
+            max-height: 300px;
+            padding: 1rem;
+            background: var(--surface-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .bulk-textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(79, 209, 199, 0.1);
+        }
+
+        .bulk-textarea::placeholder {
+            color: var(--text-secondary);
+            font-family: inherit;
+        }
+
+        .bulk-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .target-count {
+            color: var(--accent-blue);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .bulk-action-btn {
+            padding: 0.5rem 1rem;
+            background: var(--accent-bg);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .bulk-action-btn:hover {
+            background: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        .bulk-scan-btn {
+            align-self: flex-start;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Bulk Progress Styles */
+        .bulk-progress-container {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .bulk-progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .bulk-progress-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .bulk-progress-stats {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .target-progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .target-progress-item {
+            background: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .target-info {
+            flex: 1;
+        }
+
+        .target-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .target-status {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .target-progress {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .target-progress-bar {
+            width: 100px;
+            height: 6px;
+            background: var(--accent-bg);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .target-progress-fill {
+            height: 100%;
+            background: var(--gradient-secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .target-progress-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            min-width: 40px;
+        }
+
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .status-pending {
+            background: rgba(160, 174, 192, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .status-running {
+            background: rgba(79, 209, 199, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .status-completed {
+            background: rgba(104, 211, 145, 0.2);
+            color: var(--accent-green);
+        }
+
+        .status-error {
+            background: rgba(252, 129, 129, 0.2);
+            color: var(--accent-red);
+        }
+
+        @media (max-width: 768px) {
+            .scan-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .input-mode-toggle {
+                align-self: center;
+            }
+
+            .bulk-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .bulk-actions {
+                justify-content: center;
+            }
+
+            .bulk-scan-btn {
+                align-self: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>CyberScan Pro</h1>
+            <p class="subtitle">Advanced OSINT & Security Analysis Platform</p>
+            <div class="security-badge">
+                <i class="fas fa-lock"></i>
+                <span>Enterprise Security Suite</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 프로젝트 관리 섹션 -->
+        <div class="project-section">
+            <div class="project-header">
+                <h2><i class="fas fa-folder"></i> 프로젝트 관리</h2>
+                <div class="project-actions">
+                    <select id="project-select" class="project-select">
+                        <option value="">프로젝트를 선택하세요...</option>
+                    </select>
+                    <button class="project-btn" id="new-project-btn" onclick="showNewProjectModal()">
+                        <i class="fas fa-plus"></i>
+                        <span>새 프로젝트</span>
+                    </button>
+                    <button class="project-btn secondary" id="manage-projects-btn" onclick="showProjectManager()">
+                        <i class="fas fa-cog"></i>
+                        <span>프로젝트 관리</span>
+                    </button>
+                </div>
+            </div>
+            <div class="project-info" id="project-info" style="display: none;">
+                <div class="project-details">
+                    <div class="project-name" id="current-project-name"></div>
+                    <div class="project-description" id="current-project-description"></div>
+                    <div class="project-stats">
+                        <span class="stat-item">
+                            <i class="fas fa-calendar"></i>
+                            <span id="project-updated">마지막 업데이트: </span>
+                        </span>
+                        <span class="stat-item">
+                            <i class="fas fa-search"></i>
+                            <span id="project-scans">스캔 개수: </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scan-section">
+            <div class="scan-header">
+                <h3><i class="fas fa-crosshairs"></i> 스캔 대상 설정</h3>
+                <div class="input-mode-toggle">
+                    <button class="mode-btn active" id="single-mode-btn" onclick="switchInputMode('single')">
+                        <i class="fas fa-search"></i>
+                        단일 대상
+                    </button>
+                    <button class="mode-btn" id="bulk-mode-btn" onclick="switchInputMode('bulk')">
+                        <i class="fas fa-list"></i>
+                        대량 스캔
+                    </button>
+                </div>
+            </div>
+
+            <!-- 단일 대상 입력 모드 -->
+            <div class="input-mode" id="single-input-mode">
+                <div class="scan-form">
+                    <div class="input-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="domain-input" class="scan-input" 
+                               placeholder="대상 도메인 또는 IP 주소를 입력하세요 (예: example.com, 192.168.1.1)" />
+                    </div>
+                    <button class="scan-btn" id="scan-btn" onclick="startScan()">
+                        <i class="fas fa-play"></i>
+                        <span>스캔 시작</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 대량 스캔 입력 모드 -->
+            <div class="input-mode" id="bulk-input-mode" style="display: none;">
+                <div class="bulk-input-section">
+                    <div class="bulk-textarea-wrapper">
+                        <label for="bulk-targets" class="bulk-label">
+                            <i class="fas fa-list-ul"></i>
+                            스캔 대상 목록 (한 줄에 하나씩 입력)
+                        </label>
+                        <textarea id="bulk-targets" class="bulk-textarea" 
+                                  placeholder="example.com&#10;192.168.1.1&#10;subdomain.example.com&#10;10.0.0.1&#10;&#10;쉼표로 구분하여 입력도 가능:&#10;example.com, 192.168.1.1, test.com"></textarea>
+                        <div class="bulk-info">
+                            <span class="target-count" id="target-count">0개 대상</span>
+                            <div class="bulk-actions">
+                                <button class="bulk-action-btn" onclick="clearBulkTargets()">
+                                    <i class="fas fa-trash"></i>
+                                    전체 삭제
+                                </button>
+                                <button class="bulk-action-btn" onclick="loadSampleTargets()">
+                                    <i class="fas fa-magic"></i>
+                                    샘플 로드
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="scan-btn bulk-scan-btn" id="bulk-scan-btn" onclick="startBulkScan()">
+                        <i class="fas fa-rocket"></i>
+                        <span>대량 스캔 시작</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 단일 스캔 진행률 -->
+            <div class="progress-container" id="progress-container">
+                <div class="progress-wrapper">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span class="progress-text" id="progress-text">스캔 준비 중...</span>
+                        <span id="progress-percentage">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 대량 스캔 진행률 -->
+            <div class="bulk-progress-container" id="bulk-progress-container" style="display: none;">
+                <div class="bulk-progress-header">
+                    <div class="bulk-progress-title">대량 스캔 진행 상황</div>
+                    <div class="bulk-progress-stats" id="bulk-progress-stats">0/0 완료</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="bulk-progress-fill"></div>
+                </div>
+                <div class="progress-info">
+                    <span class="progress-text" id="bulk-progress-text">스캔 준비 중...</span>
+                    <span id="bulk-progress-percentage">0%</span>
+                </div>
+                <div class="target-progress-list" id="target-progress-list">
+                    <!-- 개별 타겟 진행 상황이 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="results-container" id="results-container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('scan-results')">
+                    <i class="fas fa-list-ul"></i>
+                    <span>스캔 결과</span>
+                </button>
+                <button class="nav-tab" onclick="showTab('ai-analysis')">
+                    <i class="fas fa-brain"></i>
+                    <span>AI 분석</span>
+                </button>
+                <button class="nav-tab" onclick="showTab('executive-summary')">
+                    <i class="fas fa-file-alt"></i>
+                    <span>경영진 보고서</span>
+                </button>
+            </div>
+
+            <div class="tab-content active" id="scan-results">
+                <h3><i class="fas fa-search-plus"></i> 상세 스캔 결과</h3>
+                <div id="results-content"></div>
+            </div>
+
+            <div class="tab-content" id="ai-analysis">
+                <h3><i class="fas fa-robot"></i> AI 보안 위협 분석</h3>
+                <div id="ai-analysis-content">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>AI 분석 엔진이 보안 위협을 분석하고 있습니다...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="executive-summary">
+                <h3><i class="fas fa-chart-line"></i> 경영진 보고서</h3>
+                <div id="executive-summary-content">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>경영진용 보안 위험 평가 보고서를 생성하고 있습니다...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모달들 -->
+    <!-- 새 프로젝트 생성 모달 -->
+    <div class="modal" id="new-project-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i>새 프로젝트 생성</h3>
+                <button class="modal-close" onclick="closeModal('new-project-modal')">&times;</button>
+            </div>
+            <form id="new-project-form">
+                <div class="form-group">
+                    <label for="project-name">프로젝트 이름 *</label>
+                    <input type="text" id="project-name" class="form-input" required 
+                           placeholder="프로젝트 이름을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="project-description">설명</label>
+                    <textarea id="project-description" class="form-input form-textarea" 
+                              placeholder="프로젝트에 대한 설명을 입력하세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="project-color">프로젝트 색상</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="project-color" class="color-picker" value="#4fd1c7">
+                        <span>프로젝트를 구분할 색상을 선택하세요</span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal('new-project-modal')">취소</button>
+                    <button type="submit" class="btn-primary">프로젝트 생성</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 프로젝트 관리 모달 -->
+    <div class="modal" id="project-manager-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i>프로젝트 관리</h3>
+                <button class="modal-close" onclick="closeModal('project-manager-modal')">&times;</button>
+            </div>
+            <div class="project-list" id="project-list">
+                <!-- 프로젝트 목록이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 편집 모달 -->
+    <div class="modal" id="edit-project-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i>프로젝트 편집</h3>
+                <button class="modal-close" onclick="closeModal('edit-project-modal')">&times;</button>
+            </div>
+            <form id="edit-project-form">
+                <input type="hidden" id="edit-project-id">
+                <div class="form-group">
+                    <label for="edit-project-name">프로젝트 이름 *</label>
+                    <input type="text" id="edit-project-name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-project-description">설명</label>
+                    <textarea id="edit-project-description" class="form-input form-textarea"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-project-color">프로젝트 색상</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="edit-project-color" class="color-picker">
+                        <span>프로젝트를 구분할 색상을 선택하세요</span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal('edit-project-modal')">취소</button>
+                    <button type="submit" class="btn-primary">변경사항 저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentScanId = null;
+        let progressInterval = null;
+        let projects = [];
+        let currentProject = null;
+        let currentBulkMode = false;
+
+        // 페이지 로드 시 프로젝트 목록 불러오기
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProjects();
+        });
+
+        // 프로젝트 관리 함수들
+        function loadProjects() {
+            fetch('/projects')
+            .then(response => response.json())
+            .then(data => {
+                projects = data;
+                updateProjectSelect();
+                
+                // 첫 번째 프로젝트를 기본으로 선택
+                if (projects.length > 0) {
+                    selectProject(projects[0].id);
+                }
+            })
+            .catch(error => {
+                console.error('프로젝트 로드 실패:', error);
+            });
+        }
+
+        function updateProjectSelect() {
+            const select = document.getElementById('project-select');
+            select.innerHTML = '<option value="">프로젝트를 선택하세요...</option>';
+            
+            projects.forEach(project => {
+                const option = document.createElement('option');
+                option.value = project.id;
+                option.textContent = project.name;
+                option.style.color = project.color;
+                select.appendChild(option);
+            });
+        }
+
+        function selectProject(projectId) {
+            const project = projects.find(p => p.id == projectId);
+            if (!project) return;
+
+            currentProject = project;
+            const select = document.getElementById('project-select');
+            select.value = projectId;
+
+            // 프로젝트 정보 표시
+            const projectInfo = document.getElementById('project-info');
+            const projectName = document.getElementById('current-project-name');
+            const projectDescription = document.getElementById('current-project-description');
+            const projectUpdated = document.getElementById('project-updated');
+            const projectScans = document.getElementById('project-scans');
+
+            projectName.textContent = project.name;
+            projectName.style.color = project.color;
+            projectDescription.textContent = project.description || '설명이 없습니다.';
+            projectUpdated.textContent = `마지막 업데이트: ${new Date(project.updated_date).toLocaleString()}`;
+            projectScans.textContent = `스캔 개수: ${project.scan_count}개`;
+
+            projectInfo.style.display = 'block';
+        }
+
+        // 프로젝트 선택 이벤트
+        document.getElementById('project-select').addEventListener('change', function() {
+            const projectId = this.value;
+            if (projectId) {
+                selectProject(projectId);
+            } else {
+                document.getElementById('project-info').style.display = 'none';
+                currentProject = null;
+            }
+        });
+
+        // 모달 관련 함수들
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('show');
+        }
+
+        function showNewProjectModal() {
+            document.getElementById('new-project-form').reset();
+            showModal('new-project-modal');
+        }
+
+        function showProjectManager() {
+            loadProjectList();
+            showModal('project-manager-modal');
+        }
+
+        function loadProjectList() {
+            const projectList = document.getElementById('project-list');
+            projectList.innerHTML = '';
+
+            projects.forEach(project => {
+                const projectItem = document.createElement('div');
+                projectItem.className = 'project-item';
+                projectItem.innerHTML = `
+                    <div class="project-item-info">
+                        <div class="project-item-name" style="color: ${project.color};">${project.name}</div>
+                        <div class="project-item-description">${project.description || '설명 없음'} (${project.scan_count}개 스캔)</div>
+                    </div>
+                    <div class="project-item-actions">
+                        <button class="btn-icon btn-edit" onclick="editProject(${project.id})" title="편집">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${project.name !== '기본 프로젝트' ? `
+                            <button class="btn-icon btn-delete" onclick="deleteProject(${project.id})" title="삭제">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                projectList.appendChild(projectItem);
+            });
+        }
+
+        function editProject(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+
+            document.getElementById('edit-project-id').value = project.id;
+            document.getElementById('edit-project-name').value = project.name;
+            document.getElementById('edit-project-description').value = project.description || '';
+            document.getElementById('edit-project-color').value = project.color;
+
+            closeModal('project-manager-modal');
+            showModal('edit-project-modal');
+        }
+
+        function deleteProject(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+
+            if (confirm(`'${project.name}' 프로젝트를 삭제하시겠습니까?\n관련된 모든 스캔 결과도 함께 삭제됩니다.`)) {
+                fetch(`/projects/${projectId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadProjects();
+                        closeModal('project-manager-modal');
+                    } else {
+                        alert('프로젝트 삭제 실패: ' + (data.error || '알 수 없는 오류'));
+                    }
+                })
+                .catch(error => {
+                    alert('프로젝트 삭제 실패: ' + error.message);
+                });
+            }
+        }
+
+        // 새 프로젝트 생성 폼 제출
+        document.getElementById('new-project-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('project-name').value,
+                description: document.getElementById('project-description').value,
+                color: document.getElementById('project-color').value
+            };
+
+            fetch('/projects', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    loadProjects();
+                    closeModal('new-project-modal');
+                } else {
+                    alert('프로젝트 생성 실패: ' + (data.error || '알 수 없는 오류'));
+                }
+            })
+            .catch(error => {
+                alert('프로젝트 생성 실패: ' + error.message);
+            });
+        });
+
+        // 프로젝트 편집 폼 제출
+        document.getElementById('edit-project-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const projectId = document.getElementById('edit-project-id').value;
+            const formData = {
+                name: document.getElementById('edit-project-name').value,
+                description: document.getElementById('edit-project-description').value,
+                color: document.getElementById('edit-project-color').value
+            };
+
+            fetch(`/projects/${projectId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadProjects();
+                    closeModal('edit-project-modal');
+                } else {
+                    alert('프로젝트 수정 실패: ' + (data.error || '알 수 없는 오류'));
+                }
+            })
+            .catch(error => {
+                alert('프로젝트 수정 실패: ' + error.message);
+            });
+        });
+
+        // 모달 외부 클릭 시 닫기
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // 입력 모드 전환 함수
+        function switchInputMode(mode) {
+            const singleMode = document.getElementById('single-input-mode');
+            const bulkMode = document.getElementById('bulk-input-mode');
+            const singleBtn = document.getElementById('single-mode-btn');
+            const bulkBtn = document.getElementById('bulk-mode-btn');
+
+            if (mode === 'single') {
+                singleMode.style.display = 'block';
+                bulkMode.style.display = 'none';
+                singleBtn.classList.add('active');
+                bulkBtn.classList.remove('active');
+            } else {
+                singleMode.style.display = 'none';
+                bulkMode.style.display = 'block';
+                singleBtn.classList.remove('active');
+                bulkBtn.classList.add('active');
+            }
+        }
+
+        // 대상 개수 업데이트
+        function updateTargetCount() {
+            const textarea = document.getElementById('bulk-targets');
+            const countElement = document.getElementById('target-count');
+            
+            const targets = parseTargets(textarea.value);
+            countElement.textContent = `${targets.length}개 대상`;
+        }
+
+        // 타겟 파싱 함수
+        function parseTargets(text) {
+            const targets = [];
+            
+            // 쉼표로 구분된 경우와 줄바꿈으로 구분된 경우 모두 처리
+            const lines = text.split(/[\n,]/).map(line => line.trim()).filter(line => line);
+            
+            for (const line of lines) {
+                if (line) {
+                    targets.push(line);
+                }
+            }
+            
+            return targets;
+        }
+
+        // 대량 입력 관련 함수들
+        function clearBulkTargets() {
+            document.getElementById('bulk-targets').value = '';
+            updateTargetCount();
+        }
+
+        function loadSampleTargets() {
+            const sampleTargets = [
+                'google.com',
+                'github.com',
+                '8.8.8.8',
+                'example.com',
+                'cloudflare.com'
+            ];
+            document.getElementById('bulk-targets').value = sampleTargets.join('\n');
+            updateTargetCount();
+        }
+
+        // 대량 입력 텍스트 변경 이벤트
+        document.addEventListener('DOMContentLoaded', function() {
+            const bulkTextarea = document.getElementById('bulk-targets');
+            if (bulkTextarea) {
+                bulkTextarea.addEventListener('input', updateTargetCount);
+            }
+        });
+
+        function startScan() {
+            const domain = document.getElementById('domain-input').value.trim();
+            if (!domain) {
+                alert('대상 도메인 또는 IP 주소를 입력해주세요.');
+                return;
+            }
+
+            if (!currentProject) {
+                alert('프로젝트를 먼저 선택해주세요.');
+                return;
+            }
+
+            const scanBtn = document.getElementById('scan-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const bulkProgressContainer = document.getElementById('bulk-progress-container');
+            const resultsContainer = document.getElementById('results-container');
+
+            scanBtn.disabled = true;
+            scanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>스캔 중...</span>';
+            progressContainer.style.display = 'block';
+            bulkProgressContainer.style.display = 'none';
+            resultsContainer.style.display = 'none';
+
+            fetch('/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    targets: [domain],
+                    project_id: currentProject.id,
+                    bulk_mode: false
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('스캔 시작 실패: ' + data.error);
+                    resetUI();
+                    return;
+                }
+
+                currentScanId = data.scan_id;
+                currentBulkMode = false;
+                checkProgress();
+            })
+            .catch(error => {
+                alert('스캔 요청 실패: ' + error.message);
+                resetUI();
+            });
+        }
+
+        function startBulkScan() {
+            const targets = parseTargets(document.getElementById('bulk-targets').value);
+            
+            if (targets.length === 0) {
+                alert('스캔할 대상을 입력해주세요.');
+                return;
+            }
+
+            if (!currentProject) {
+                alert('프로젝트를 먼저 선택해주세요.');
+                return;
+            }
+
+            const bulkScanBtn = document.getElementById('bulk-scan-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const bulkProgressContainer = document.getElementById('bulk-progress-container');
+            const resultsContainer = document.getElementById('results-container');
+
+            bulkScanBtn.disabled = true;
+            bulkScanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>대량 스캔 중...</span>';
+            progressContainer.style.display = 'none';
+            bulkProgressContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+
+            // 대량 스캔 진행률 초기화
+            initBulkProgress(targets);
+
+            fetch('/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    targets: targets,
+                    project_id: currentProject.id,
+                    bulk_mode: true
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('대량 스캔 시작 실패: ' + data.error);
+                    resetUI();
+                    return;
+                }
+
+                if (data.invalid_targets && data.invalid_targets.length > 0) {
+                    alert(`다음 대상들은 유효하지 않아 제외됩니다:\n${data.invalid_targets.join('\n')}`);
+                }
+
+                currentScanId = data.scan_id;
+                currentBulkMode = true;
+                checkProgress();
+            })
+            .catch(error => {
+                alert('대량 스캔 요청 실패: ' + error.message);
+                resetUI();
+            });
+        }
+
+        function initBulkProgress(targets) {
+            const targetList = document.getElementById('target-progress-list');
+            const bulkStats = document.getElementById('bulk-progress-stats');
+            
+            targetList.innerHTML = '';
+            bulkStats.textContent = `0/${targets.length} 완료`;
+            
+            targets.forEach(target => {
+                const targetItem = document.createElement('div');
+                targetItem.className = 'target-progress-item';
+                targetItem.id = `target-${target.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                targetItem.innerHTML = `
+                    <div class="target-info">
+                        <div class="target-name">${target}</div>
+                        <div class="target-status">대기 중...</div>
+                    </div>
+                    <div class="target-progress">
+                        <div class="target-progress-bar">
+                            <div class="target-progress-fill"></div>
+                        </div>
+                        <div class="target-progress-text">0%</div>
+                        <div class="status-icon status-pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                `;
+                targetList.appendChild(targetItem);
+            });
+        }
+
+        function updateBulkProgress(scanData) {
+            const bulkProgressFill = document.getElementById('bulk-progress-fill');
+            const bulkProgressText = document.getElementById('bulk-progress-text');
+            const bulkProgressPercentage = document.getElementById('bulk-progress-percentage');
+            const bulkStats = document.getElementById('bulk-progress-stats');
+            
+            // 전체 진행률 업데이트
+            const progress = scanData.progress || 0;
+            const completedCount = scanData.completed_count || 0;
+            const totalCount = scanData.total_count || 0;
+            
+            bulkProgressFill.style.width = progress + '%';
+            bulkProgressText.textContent = getStatusText(scanData.status);
+            bulkProgressPercentage.textContent = Math.round(progress) + '%';
+            bulkStats.textContent = `${completedCount}/${totalCount} 완료`;
+            
+            // 개별 타겟 진행률 업데이트
+            if (scanData.target_status) {
+                Object.entries(scanData.target_status).forEach(([target, status]) => {
+                    updateTargetProgress(target, status);
+                });
+            }
+        }
+
+        function updateTargetProgress(target, status) {
+            const targetId = `target-${target.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            const targetElement = document.getElementById(targetId);
+            
+            if (!targetElement) return;
+            
+            const statusElement = targetElement.querySelector('.target-status');
+            const progressFill = targetElement.querySelector('.target-progress-fill');
+            const progressText = targetElement.querySelector('.target-progress-text');
+            const statusIcon = targetElement.querySelector('.status-icon');
+            
+            // 상태 텍스트 업데이트
+            const statusTexts = {
+                'pending': '대기 중...',
+                'running': '스캔 중...',
+                'completed': '완료',
+                'error': '오류 발생'
+            };
+            
+            statusElement.textContent = status.error ? 
+                `오류: ${status.error}` : statusTexts[status.status] || status.status;
+            
+            // 진행률 업데이트
+            const progress = status.progress || 0;
+            progressFill.style.width = progress + '%';
+            progressText.textContent = Math.round(progress) + '%';
+            
+            // 상태 아이콘 업데이트
+            statusIcon.className = `status-icon status-${status.status}`;
+            const iconMap = {
+                'pending': 'fas fa-clock',
+                'running': 'fas fa-spinner fa-spin',
+                'completed': 'fas fa-check',
+                'error': 'fas fa-times'
+            };
+            statusIcon.innerHTML = `<i class="${iconMap[status.status] || 'fas fa-question'}"></i>`;
+        }
+
+        function checkProgress() {
+            if (!currentScanId) return;
+
+            progressInterval = setInterval(() => {
+                fetch(`/scan/${currentScanId}/status`)
+                .then(response => response.json())
+                .then(data => {
+                    if (currentBulkMode) {
+                        updateBulkProgress(data);
+                    } else {
+                        updateProgress(data.progress || 0, data.status);
+                    }
+
+                    if (data.status === 'completed') {
+                        clearInterval(progressInterval);
+                        loadResults();
+                    } else if (data.status === 'error') {
+                        clearInterval(progressInterval);
+                        alert('스캔 오류: ' + data.error);
+                        resetUI();
+                    }
+                })
+                .catch(error => {
+                    console.error('진행상황 확인 실패:', error);
+                });
+            }, 2000);
+        }
+
+        function updateProgress(progress, status) {
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            const progressPercentage = document.getElementById('progress-percentage');
+
+            progressFill.style.width = progress + '%';
+            progressText.textContent = getStatusText(status);
+            progressPercentage.textContent = Math.round(progress) + '%';
+        }
+
+        function getStatusText(status) {
+            const statusTexts = {
+                'started': '스캔 초기화 중...',
+                'running': '보안 취약점 스캔 중...',
+                'analyzing': 'AI 위협 분석 중...',
+                'completed': '스캔 완료'
+            };
+            return statusTexts[status] || status;
+        }
+
+        function loadResults() {
+            fetch(`/scan/${currentScanId}/results`)
+            .then(response => response.json())
+            .then(data => {
+                displayResults(data);
+                loadAIAnalysis();
+                resetUI();
+                document.getElementById('results-container').style.display = 'block';
+                
+                // 스캔 완료 후 프로젝트 정보 새로고침
+                loadProjects();
+            })
+            .catch(error => {
+                alert('결과 로드 실패: ' + error.message);
+                resetUI();
+            });
+        }
+
+        function loadAIAnalysis() {
+            fetch(`/scan/${currentScanId}/analysis`)
+            .then(response => response.json())
+            .then(data => {
+                displayAIAnalysis(data.analysis);
+                displayExecutiveSummary(data.executive_summary);
+            })
+            .catch(error => {
+                console.error('AI 분석 로드 실패:', error);
+                document.getElementById('ai-analysis-content').innerHTML = 
+                    '<div class="loading"><p>AI 분석 서비스를 사용할 수 없습니다.</p></div>';
+                document.getElementById('executive-summary-content').innerHTML = 
+                    '<div class="loading"><p>경영진 보고서를 생성할 수 없습니다.</p></div>';
+            });
+        }
+
+        function displayAIAnalysis(analysis) {
+            const content = document.getElementById('ai-analysis-content');
+            
+            let html = `
+                <div class="risk-dashboard">
+                    <div class="risk-score-large ${getRiskClass(analysis.risk_score)}">${analysis.risk_score}/100</div>
+                    <div class="risk-level-text">전체 위험도: ${getRiskLevelText(analysis.risk_level)}</div>
+                </div>
+            `;
+
+            // 주요 발견사항
+            if (analysis.critical_findings && analysis.critical_findings.length > 0) {
+                html += `
+                    <div class="analysis-section">
+                        <h4><i class="fas fa-exclamation-triangle"></i>주요 보안 위협</h4>
+                `;
+                analysis.critical_findings.slice(0, 8).forEach(finding => {
+                    html += `
+                        <div class="info-item ${finding.severity?.toLowerCase() || 'medium'}">
+                            <strong>${finding.type}</strong>: ${finding.description}
+                            ${finding.hostname ? `<br><small class="text-info">호스트: ${finding.hostname}</small>` : ''}
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            // 위협 인텔리전스
+            if (analysis.threat_intelligence && analysis.threat_intelligence.length > 0) {
+                html += `
+                    <div class="analysis-section">
+                        <h4><i class="fas fa-shield-virus"></i>위협 인텔리전스</h4>
+                `;
+                analysis.threat_intelligence.forEach(threat => {
+                    html += `
+                        <div class="info-item ${threat.severity?.toLowerCase()}">
+                            <h5>${threat.type}</h5>
+                            <p>${threat.description}</p>
+                            <strong>완화 방안:</strong> ${threat.mitigation}
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            // 수정 권장사항
+            if (analysis.remediation_priorities && analysis.remediation_priorities.length > 0) {
+                html += `
+                    <div class="analysis-section">
+                        <h4><i class="fas fa-tools"></i>수정 권장사항</h4>
+                `;
+                analysis.remediation_priorities.forEach(priority => {
+                    html += `
+                        <div class="info-item priority-${priority.priority}">
+                            <h5>${priority.title}</h5>
+                            <p>${priority.description}</p>
+                            <strong>완료 기한:</strong> ${priority.timeline}
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            if (!html.includes('analysis-section')) {
+                html += '<div class="analysis-section"><p>분석할 보안 데이터가 충분하지 않습니다.</p></div>';
+            }
+
+            content.innerHTML = html;
+        }
+
+        function displayExecutiveSummary(summary) {
+            const content = document.getElementById('executive-summary-content');
+            content.innerHTML = `<div class="executive-summary">${summary || '경영진 보고서를 생성할 수 없습니다.'}</div>`;
+        }
+
+        function displayResults(results) {
+            const resultsContent = document.getElementById('results-content');
+            resultsContent.innerHTML = '';
+
+            for (const [hostname, data] of Object.entries(results)) {
+                const hostDiv = createHostResult(hostname, data);
+                resultsContent.appendChild(hostDiv);
+            }
+        }
+
+        function createHostResult(hostname, data) {
+            const hostDiv = document.createElement('div');
+            hostDiv.className = 'host-result';
+
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'host-header';
+            headerDiv.innerHTML = `
+                <div>
+                    <span class="host-title">${hostname}</span>
+                    <span class="host-ip">(${data.ip || 'IP 없음'})</span>
+                </div>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            `;
+            headerDiv.onclick = () => toggleHostContent(hostDiv);
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'host-content';
+            
+            const infoGrid = document.createElement('div');
+            infoGrid.className = 'info-grid';
+
+            // 네트워크 라우팅 정보 (첫 번째로 표시)
+            if (data.routing_info || data.network_analysis) {
+                infoGrid.appendChild(createNetworkInfoSection(data));
+            }
+
+            // 포트 정보
+            infoGrid.appendChild(createInfoSection('포트 스캔 결과', data.ports || [], 'ports'));
+            
+            // 서비스 정보
+            infoGrid.appendChild(createInfoSection('검출된 서비스', data.services || [], 'services'));
+            
+            // CVE 정보
+            infoGrid.appendChild(createInfoSection('보안 취약점', data.cves || [], 'cves'));
+
+            // PoC 코드
+            if (data.poc_codes && data.poc_codes.length > 0) {
+                infoGrid.appendChild(createInfoSection('PoC 코드', data.poc_codes, 'poc'));
+            }
+
+            contentDiv.appendChild(infoGrid);
+            hostDiv.appendChild(headerDiv);
+            hostDiv.appendChild(contentDiv);
+
+            return hostDiv;
+        }
+
+        function createInfoSection(title, items, type) {
+            const section = document.createElement('div');
+            section.className = 'info-section';
+
+            const icons = {
+                'ports': 'fas fa-network-wired',
+                'services': 'fas fa-cogs',
+                'cves': 'fas fa-bug',
+                'poc': 'fas fa-code'
+            };
+
+            const header = document.createElement('h4');
+            header.innerHTML = `<i class="${icons[type] || 'fas fa-info-circle'}"></i>${title}`;
+            section.appendChild(header);
+
+            if (items.length === 0) {
+                const noData = document.createElement('p');
+                noData.textContent = '검출된 정보가 없습니다.';
+                noData.className = 'text-secondary';
+                section.appendChild(noData);
+                return section;
+            }
+
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                
+                if (type === 'ports') {
+                    itemDiv.className = `info-item ${item.state === 'open' ? 'low' : ''}`;
+                    let webInfo = '';
+                    if (item.web_accessible && item.web_accessible.accessible) {
+                        const wa = item.web_accessible;
+                        webInfo = `
+                            <div class="web-info">
+                                <i class="fas fa-globe"></i> 웹 서비스 접근 가능 (${wa.status_code})
+                                ${wa.title ? `<br>페이지 제목: ${wa.title}` : ''}
+                                ${wa.server && wa.server !== 'unknown' ? `<br>웹 서버: ${wa.server}` : ''}
+                            </div>
+                        `;
+                    }
+                    
+                    itemDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>포트 ${item.port}/${item.protocol}</strong>
+                            <span class="status-badge status-${item.state}">${item.state}</span>
+                        </div>
+                        <div style="color: var(--text-secondary); margin-top: 0.5rem;">
+                            서비스: ${item.service}
+                        </div>
+                        ${webInfo}
+                    `;
+
+                    // 디렉토리 스캔 결과
+                    if (item.web_accessible && item.web_accessible.directories && item.web_accessible.directories.length > 0) {
+                        const dirResults = document.createElement('div');
+                        dirResults.className = 'directory-results';
+                        dirResults.innerHTML = `
+                            <h5><i class="fas fa-folder-open"></i> 디렉토리 스캔 (${item.web_accessible.directories.length}개 발견)</h5>
+                            ${item.web_accessible.directories.map(dir => `
+                                <div class="directory-item risk-${dir.risk_level?.toLowerCase()}">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <strong>${dir.path}</strong>
+                                        <span class="status-badge">${dir.status_code}</span>
+                                    </div>
+                                    <div style="margin-top: 0.5rem;">
+                                        <a href="${dir.url}" target="_blank" class="directory-url">${dir.url}</a>
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                        위험도: ${getRiskLevelText(dir.risk_level)} | 크기: ${formatBytes(dir.size)}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        `;
+                        itemDiv.appendChild(dirResults);
+                    }
+                } else if (type === 'services') {
+                    itemDiv.className = 'info-item';
+                    itemDiv.innerHTML = `
+                        <strong>${item.service}</strong> <span style="color: var(--text-secondary);">(포트 ${item.port})</span>
+                        <br>버전: ${item.version || 'Unknown'}
+                    `;
+                } else if (type === 'cves') {
+                    const severity = getSeverityFromScore(item.severity);
+                    itemDiv.className = `info-item ${severity}`;
+                    itemDiv.innerHTML = `
+                        <strong>${item.id}</strong> <span class="status-badge">${severity.toUpperCase()}</span>
+                        <br><span style="color: var(--text-secondary);">${item.description}</span>
+                        <br>CVSS 점수: ${item.severity}
+                    `;
+                } else if (type === 'poc') {
+                    itemDiv.className = 'info-item';
+                    itemDiv.innerHTML = `
+                        <strong>${item.cve_id}</strong>
+                        <br><a href="${item.repository}" target="_blank" class="directory-url">${item.repository}</a>
+                        <br><span style="color: var(--text-secondary);">${item.description || '설명 없음'}</span>
+                        <div style="margin-top: 0.5rem; font-size: 0.8rem;">
+                            <i class="fas fa-star"></i> ${item.stars} | 
+                            <i class="fas fa-code"></i> ${item.language || 'N/A'}
+                        </div>
+                    `;
+                }
+                
+                section.appendChild(itemDiv);
+            });
+
+            return section;
+        }
+
+        function createNetworkInfoSection(data) {
+            const section = document.createElement('div');
+            section.className = 'info-section';
+
+            const header = document.createElement('h4');
+            header.innerHTML = '<i class="fas fa-network-wired"></i>네트워크 정보';
+            section.appendChild(header);
+
+            const networkInfo = data.network_analysis;
+            const routingInfo = data.routing_info;
+
+            if (!networkInfo && !routingInfo) {
+                const noData = document.createElement('p');
+                noData.textContent = '네트워크 정보를 수집할 수 없습니다.';
+                noData.className = 'text-secondary';
+                section.appendChild(noData);
+                return section;
+            }
+
+            // 네트워크 분석 정보
+            if (networkInfo) {
+                const analysisDiv = document.createElement('div');
+                analysisDiv.className = 'info-item';
+                
+                let analysisContent = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <strong><i class="fas fa-sitemap"></i> 네트워크 토폴로지 분석</strong>
+                        <span class="status-badge">${networkInfo.network_type?.toUpperCase() || 'UNKNOWN'}</span>
+                    </div>
+                `;
+
+                if (networkInfo.default_gateway) {
+                    analysisContent += `
+                        <div style="margin-bottom: 0.5rem;">
+                            <i class="fas fa-route"></i> <strong>기본 게이트웨이:</strong> ${networkInfo.default_gateway}
+                        </div>
+                    `;
+                }
+
+                if (networkInfo.internal_networks && networkInfo.internal_networks.length > 0) {
+                    analysisContent += `
+                        <div style="margin-bottom: 0.5rem;">
+                            <i class="fas fa-home"></i> <strong>내부 네트워크:</strong>
+                            <div style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                                ${networkInfo.internal_networks.map(net => `<span class="status-badge status-open">${net}</span>`).join(' ')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (networkInfo.external_networks && networkInfo.external_networks.length > 0) {
+                    analysisContent += `
+                        <div style="margin-bottom: 0.5rem;">
+                            <i class="fas fa-globe"></i> <strong>외부 네트워크:</strong>
+                            <div style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                                ${networkInfo.external_networks.map(net => `<span class="status-badge">${net}</span>`).join(' ')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (networkInfo.security_implications && networkInfo.security_implications.length > 0) {
+                    analysisContent += `
+                        <div style="margin-top: 1rem;">
+                            <strong><i class="fas fa-shield-alt"></i> 보안 고려사항:</strong>
+                            <div style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                ${networkInfo.security_implications.map(impl => `
+                                    <div class="info-item ${impl.severity?.toLowerCase() || 'info'}" style="margin: 0.25rem 0; padding: 0.5rem;">
+                                        <strong>${impl.type}:</strong> ${impl.description}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                analysisDiv.innerHTML = analysisContent;
+                section.appendChild(analysisDiv);
+            }
+
+            // 라우팅 테이블 정보
+            if (routingInfo && routingInfo.routes && routingInfo.routes.length > 0) {
+                const routingDiv = document.createElement('div');
+                routingDiv.className = 'info-item';
+                
+                let routingContent = `
+                    <div style="margin-bottom: 0.75rem;">
+                        <strong><i class="fas fa-table"></i> 라우팅 테이블</strong>
+                        <span style="color: var(--text-secondary); font-size: 0.875rem; margin-left: 0.5rem;">
+                            (${routingInfo.routes.length}개 경로)
+                        </span>
+                    </div>
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: var(--accent-bg); color: var(--text-primary);">
+                                    <th style="padding: 0.5rem; text-align: left; border: 1px solid var(--border-color);">네트워크</th>
+                                    <th style="padding: 0.5rem; text-align: left; border: 1px solid var(--border-color);">넷마스크</th>
+                                    <th style="padding: 0.5rem; text-align: left; border: 1px solid var(--border-color);">게이트웨이</th>
+                                    <th style="padding: 0.5rem; text-align: left; border: 1px solid var(--border-color);">메트릭</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                // 중요한 경로들만 표시 (기본 경로와 사설 네트워크)
+                const importantRoutes = routingInfo.routes.filter(route => {
+                    return route.network === '0.0.0.0' || 
+                           route.network?.startsWith('192.168.') || 
+                           route.network?.startsWith('10.') || 
+                           route.network?.startsWith('172.');
+                }).slice(0, 10); // 최대 10개만
+
+                importantRoutes.forEach(route => {
+                    const isDefault = route.network === '0.0.0.0';
+                    const rowClass = isDefault ? 'style="background: rgba(79, 209, 199, 0.1);"' : '';
+                    
+                    routingContent += `
+                        <tr ${rowClass}>
+                            <td style="padding: 0.5rem; border: 1px solid var(--border-color);">
+                                ${route.network || 'N/A'}
+                                ${isDefault ? '<i class="fas fa-star" style="color: var(--accent-blue); margin-left: 0.25rem;" title="기본 경로"></i>' : ''}
+                            </td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--border-color);">${route.netmask || 'N/A'}</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--border-color);">${route.gateway || 'N/A'}</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--border-color);">${route.metric || 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+
+                routingContent += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                routingDiv.innerHTML = routingContent;
+                section.appendChild(routingDiv);
+            }
+
+            // 네트워크 인터페이스 정보
+            if (routingInfo && routingInfo.interfaces && routingInfo.interfaces.length > 0) {
+                const interfacesDiv = document.createElement('div');
+                interfacesDiv.className = 'info-item';
+                
+                let interfacesContent = `
+                    <div style="margin-bottom: 0.75rem;">
+                        <strong><i class="fas fa-ethernet"></i> 네트워크 인터페이스</strong>
+                        <span style="color: var(--text-secondary); font-size: 0.875rem; margin-left: 0.5rem;">
+                            (${routingInfo.interfaces.length}개 감지)
+                        </span>
+                    </div>
+                    <div style="max-height: 150px; overflow-y: auto;">
+                `;
+
+                routingInfo.interfaces.slice(0, 8).forEach((iface, index) => {
+                    interfacesContent += `
+                        <div style="background: var(--primary-bg); padding: 0.5rem; margin: 0.25rem 0; border-radius: 4px; border-left: 3px solid var(--accent-blue);">
+                            <div style="font-weight: 500;">${iface.name || 'Unknown Interface'}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                                ID: ${iface.id || 'N/A'} ${iface.mac ? `| MAC: ${iface.mac}` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                interfacesContent += `</div>`;
+                interfacesDiv.innerHTML = interfacesContent;
+                section.appendChild(interfacesDiv);
+            }
+
+            return section;
+        }
+
+        function getSeverityFromScore(score) {
+            const numScore = parseFloat(score);
+            if (numScore >= 9.0) return 'critical';
+            if (numScore >= 7.0) return 'high';
+            if (numScore >= 4.0) return 'medium';
+            return 'low';
+        }
+
+        function getRiskClass(score) {
+            if (score >= 70) return 'text-critical';
+            if (score >= 40) return 'text-medium';
+            return 'text-low';
+        }
+
+        function getRiskLevelText(level) {
+            const levels = {
+                'CRITICAL': '매우 위험',
+                'HIGH': '높음',
+                'MEDIUM': '보통',
+                'LOW': '낮음'
+            };
+            return levels[level?.toUpperCase()] || '알 수 없음';
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function toggleHostContent(hostDiv) {
+            const content = hostDiv.querySelector('.host-content');
+            const icon = hostDiv.querySelector('.expand-icon');
+            
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                icon.className = 'fas fa-chevron-down expand-icon';
+            } else {
+                content.style.display = 'block';
+                icon.className = 'fas fa-chevron-up expand-icon';
+            }
+        }
+
+        function resetUI() {
+            const scanBtn = document.getElementById('scan-btn');
+            const bulkScanBtn = document.getElementById('bulk-scan-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const bulkProgressContainer = document.getElementById('bulk-progress-container');
+
+            if (scanBtn) {
+                scanBtn.disabled = false;
+                scanBtn.innerHTML = '<i class="fas fa-play"></i><span>스캔 시작</span>';
+            }
+
+            if (bulkScanBtn) {
+                bulkScanBtn.disabled = false;
+                bulkScanBtn.innerHTML = '<i class="fas fa-rocket"></i><span>대량 스캔 시작</span>';
+            }
+
+            progressContainer.style.display = 'none';
+            bulkProgressContainer.style.display = 'none';
+            currentScanId = null;
+            currentBulkMode = false;
+
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        // Enter 키로 스캔 시작
+        document.getElementById('domain-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startScan();
+            }
+        });
+    </script>
+</body>
+</html>

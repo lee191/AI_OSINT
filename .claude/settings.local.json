@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(pip install:*)",
+      "Bash(start /b:*)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(nmap:*)",
+      "Bash(curl:*)",
+      "Bash(del:*)",
+      "Bash(taskkill:*)",
+      "Bash(route:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
