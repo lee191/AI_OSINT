@@ -507,151 +507,6 @@
             font-size: 0.875rem;
         }
 
-        /* Directory Results */
-        .directory-results {
-            margin-top: 1rem;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .directory-item {
-            background: var(--primary-bg);
-            margin: 0.5rem 0;
-            padding: 0.75rem;
-            border-radius: 6px;
-            border-left: 3px solid var(--text-secondary);
-        }
-
-        .directory-item.risk-high {
-            border-left-color: var(--accent-red);
-            background: rgba(252, 129, 129, 0.05);
-        }
-
-        .directory-item.risk-medium {
-            border-left-color: var(--accent-yellow);
-            background: rgba(246, 224, 94, 0.05);
-        }
-
-        .directory-item.risk-low {
-            border-left-color: var(--accent-green);
-            background: rgba(104, 211, 145, 0.05);
-        }
-
-        .directory-url {
-            color: var(--accent-blue);
-            text-decoration: none;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            word-break: break-all;
-        }
-
-        .directory-url:hover {
-            text-decoration: underline;
-        }
-
-        /* AI Analysis Specific Styles */
-        .risk-dashboard {
-            background: var(--gradient-primary);
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .risk-dashboard::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(0.8); opacity: 0.5; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-        }
-
-        .risk-score-large {
-            font-size: 4rem;
-            font-weight: 800;
-            margin: 1rem 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .risk-level-text {
-            font-size: 1.25rem;
-            opacity: 0.9;
-            font-weight: 500;
-            position: relative;
-            z-index: 1;
-        }
-
-        .analysis-section {
-            background: var(--surface-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .analysis-section h4 {
-            color: var(--accent-blue);
-            margin-bottom: 1.25rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .analysis-section h4 i {
-            font-size: 1.3rem;
-        }
-
-        /* Loading States */
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem;
-            color: var(--text-secondary);
-        }
-
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid rgba(79, 209, 199, 0.2);
-            border-top: 4px solid var(--accent-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Executive Summary */
-        .executive-summary {
-            background: var(--primary-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            line-height: 1.8;
-            white-space: pre-wrap;
-            color: var(--text-secondary);
-        }
-
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -679,9 +534,6 @@
                 min-width: 120px;
             }
 
-            .risk-score-large {
-                font-size: 3rem;
-            }
         }
 
         /* Scrollbar Styling */
@@ -1565,15 +1417,7 @@
             <div class="nav-tabs">
                 <button class="nav-tab active" onclick="showTab('scan-results')">
                     <i class="fas fa-list-ul"></i>
-                    <span>스캔 결과</span>
-                </button>
-                <button class="nav-tab" onclick="showTab('ai-analysis')">
-                    <i class="fas fa-brain"></i>
-                    <span>AI 분석</span>
-                </button>
-                <button class="nav-tab" onclick="showTab('executive-summary')">
-                    <i class="fas fa-file-alt"></i>
-                    <span>경영진 보고서</span>
+                    <span>FastNmap 스캔 결과</span>
                 </button>
             </div>
 
@@ -1582,25 +1426,6 @@
                 <div id="results-content"></div>
             </div>
 
-            <div class="tab-content" id="ai-analysis">
-                <h3><i class="fas fa-robot"></i> AI 보안 위협 분석</h3>
-                <div id="ai-analysis-content">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>AI 분석 엔진이 보안 위협을 분석하고 있습니다...</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-content" id="executive-summary">
-                <h3><i class="fas fa-chart-line"></i> 경영진 보고서</h3>
-                <div id="executive-summary-content">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>경영진용 보안 위험 평가 보고서를 생성하고 있습니다...</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -2232,7 +2057,7 @@
             const statusTexts = {
                 'started': '스캔 초기화 중...',
                 'running': '보안 취약점 스캔 중...',
-                'analyzing': 'AI 위협 분석 중...',
+                'analyzing': '결과 분석 중...',
                 'completed': '스캔 완료'
             };
             return statusTexts[status] || status;
@@ -2243,7 +2068,6 @@
             .then(response => response.json())
             .then(data => {
                 displayResults(data);
-                loadAIAnalysis();
                 resetUI();
                 document.getElementById('results-container').style.display = 'block';
                 
@@ -2254,97 +2078,6 @@
                 alert('결과 로드 실패: ' + error.message);
                 resetUI();
             });
-        }
-
-        function loadAIAnalysis() {
-            fetch(`/scan/${currentScanId}/analysis`)
-            .then(response => response.json())
-            .then(data => {
-                displayAIAnalysis(data.analysis);
-                displayExecutiveSummary(data.executive_summary);
-            })
-            .catch(error => {
-                console.error('AI 분석 로드 실패:', error);
-                document.getElementById('ai-analysis-content').innerHTML = 
-                    '<div class="loading"><p>AI 분석 서비스를 사용할 수 없습니다.</p></div>';
-                document.getElementById('executive-summary-content').innerHTML = 
-                    '<div class="loading"><p>경영진 보고서를 생성할 수 없습니다.</p></div>';
-            });
-        }
-
-        function displayAIAnalysis(analysis) {
-            const content = document.getElementById('ai-analysis-content');
-            
-            let html = `
-                <div class="risk-dashboard">
-                    <div class="risk-score-large ${getRiskClass(analysis.risk_score)}">${analysis.risk_score}/100</div>
-                    <div class="risk-level-text">전체 위험도: ${getRiskLevelText(analysis.risk_level)}</div>
-                </div>
-            `;
-
-            // 주요 발견사항
-            if (analysis.critical_findings && analysis.critical_findings.length > 0) {
-                html += `
-                    <div class="analysis-section">
-                        <h4><i class="fas fa-exclamation-triangle"></i>주요 보안 위협</h4>
-                `;
-                analysis.critical_findings.slice(0, 8).forEach(finding => {
-                    html += `
-                        <div class="info-item ${finding.severity?.toLowerCase() || 'medium'}">
-                            <strong>${finding.type}</strong>: ${finding.description}
-                            ${finding.hostname ? `<br><small class="text-info">호스트: ${finding.hostname}</small>` : ''}
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-            }
-
-            // 위협 인텔리전스
-            if (analysis.threat_intelligence && analysis.threat_intelligence.length > 0) {
-                html += `
-                    <div class="analysis-section">
-                        <h4><i class="fas fa-shield-virus"></i>위협 인텔리전스</h4>
-                `;
-                analysis.threat_intelligence.forEach(threat => {
-                    html += `
-                        <div class="info-item ${threat.severity?.toLowerCase()}">
-                            <h5>${threat.type}</h5>
-                            <p>${threat.description}</p>
-                            <strong>완화 방안:</strong> ${threat.mitigation}
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-            }
-
-            // 수정 권장사항
-            if (analysis.remediation_priorities && analysis.remediation_priorities.length > 0) {
-                html += `
-                    <div class="analysis-section">
-                        <h4><i class="fas fa-tools"></i>수정 권장사항</h4>
-                `;
-                analysis.remediation_priorities.forEach(priority => {
-                    html += `
-                        <div class="info-item priority-${priority.priority}">
-                            <h5>${priority.title}</h5>
-                            <p>${priority.description}</p>
-                            <strong>완료 기한:</strong> ${priority.timeline}
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-            }
-
-            if (!html.includes('analysis-section')) {
-                html += '<div class="analysis-section"><p>분석할 보안 데이터가 충분하지 않습니다.</p></div>';
-            }
-
-            content.innerHTML = html;
-        }
-
-        function displayExecutiveSummary(summary) {
-            const content = document.getElementById('executive-summary-content');
-            content.innerHTML = `<div class="executive-summary">${summary || '경영진 보고서를 생성할 수 없습니다.'}</div>`;
         }
 
         function displayResults(results) {
@@ -2561,38 +2294,6 @@
             }
 
             return section;
-        }
-
-        function getSeverityFromScore(score) {
-            const numScore = parseFloat(score);
-            if (numScore >= 9.0) return 'critical';
-            if (numScore >= 7.0) return 'high';
-            if (numScore >= 4.0) return 'medium';
-            return 'low';
-        }
-
-        function getRiskClass(score) {
-            if (score >= 70) return 'text-critical';
-            if (score >= 40) return 'text-medium';
-            return 'text-low';
-        }
-
-        function getRiskLevelText(level) {
-            const levels = {
-                'CRITICAL': '매우 위험',
-                'HIGH': '높음',
-                'MEDIUM': '보통',
-                'LOW': '낮음'
-            };
-            return levels[level?.toUpperCase()] || '알 수 없음';
-        }
-
-        function formatBytes(bytes) {
-            if (bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
         function showTab(tabName) {

@@ -102,15 +102,19 @@ class PortScanner:
             print("1단계: 전체 포트 빠른 스캔 중...")
             stage1_cmd = ['nmap', '-p-', '--min-rate=1000', '-T4', host]
             
-            stage1_result = subprocess.run(stage1_cmd, capture_output=True, text=True, timeout=300)
+            stage1_result = subprocess.run(stage1_cmd, capture_output=True, text=True, timeout=600)
             open_ports = []
+            
+            print(f"1단계 명령어 결과코드: {stage1_result.returncode}")
+            print(f"1단계 stdout: {stage1_result.stdout[:500]}")
+            print(f"1단계 stderr: {stage1_result.stderr}")
             
             if stage1_result.returncode == 0:
                 print(f"1단계 완료. 출력: {stage1_result.stdout[:200]}...")
                 # 열린 포트 추출
                 lines = stage1_result.stdout.split('\n')
                 for line in lines:
-                    if '/tcp' in line and 'open' in line:
+                    if '/tcp' in line and ('open' in line or 'filtered' in line):
                         try:
                             port = int(line.split('/')[0].strip())
                             open_ports.append(port)
