@@ -2378,9 +2378,9 @@
             const infoGrid = document.createElement('div');
             infoGrid.className = 'info-grid';
 
-            // 네트워크 라우팅 정보 (첫 번째로 표시)
-            if (data.routing_info || data.network_analysis) {
-                infoGrid.appendChild(createNetworkInfoSection(data));
+            // FastNmap 스캔 요약
+            if (data.scan_summary) {
+                infoGrid.appendChild(createScanSummarySection(data));
             }
 
             // 포트 정보
@@ -2388,14 +2388,6 @@
             
             // 서비스 정보
             infoGrid.appendChild(createInfoSection('검출된 서비스', data.services || [], 'services'));
-            
-            // CVE 정보
-            infoGrid.appendChild(createInfoSection('보안 취약점', data.cves || [], 'cves'));
-
-            // PoC 코드
-            if (data.poc_codes && data.poc_codes.length > 0) {
-                infoGrid.appendChild(createInfoSection('PoC 코드', data.poc_codes, 'poc'));
-            }
 
             contentDiv.appendChild(infoGrid);
             hostDiv.appendChild(headerDiv);
@@ -2432,18 +2424,6 @@
                 
                 if (type === 'ports') {
                     itemDiv.className = `info-item ${item.state === 'open' ? 'low' : ''}`;
-                    let webInfo = '';
-                    if (item.web_accessible && item.web_accessible.accessible) {
-                        const wa = item.web_accessible;
-                        webInfo = `
-                            <div class="web-info">
-                                <i class="fas fa-globe"></i> 웹 서비스 접근 가능 (${wa.status_code})
-                                ${wa.title ? `<br>페이지 제목: ${wa.title}` : ''}
-                                ${wa.server && wa.server !== 'unknown' ? `<br>웹 서버: ${wa.server}` : ''}
-                            </div>
-                        `;
-                    }
-                    
                     itemDiv.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <strong>포트 ${item.port}/${item.protocol}</strong>
@@ -2451,57 +2431,15 @@
                         </div>
                         <div style="color: var(--text-secondary); margin-top: 0.5rem;">
                             서비스: ${item.service}
+                            ${item.scan_method ? `<br>스캔 방식: ${item.scan_method}` : ''}
                         </div>
-                        ${webInfo}
                     `;
-
-                    // 디렉토리 스캔 결과
-                    if (item.web_accessible && item.web_accessible.directories && item.web_accessible.directories.length > 0) {
-                        const dirResults = document.createElement('div');
-                        dirResults.className = 'directory-results';
-                        dirResults.innerHTML = `
-                            <h5><i class="fas fa-folder-open"></i> 디렉토리 스캔 (${item.web_accessible.directories.length}개 발견)</h5>
-                            ${item.web_accessible.directories.map(dir => `
-                                <div class="directory-item risk-${dir.risk_level?.toLowerCase()}">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <strong>${dir.path}</strong>
-                                        <span class="status-badge">${dir.status_code}</span>
-                                    </div>
-                                    <div style="margin-top: 0.5rem;">
-                                        <a href="${dir.url}" target="_blank" class="directory-url">${dir.url}</a>
-                                    </div>
-                                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                                        위험도: ${getRiskLevelText(dir.risk_level)} | 크기: ${formatBytes(dir.size)}
-                                    </div>
-                                </div>
-                            `).join('')}
-                        `;
-                        itemDiv.appendChild(dirResults);
-                    }
                 } else if (type === 'services') {
                     itemDiv.className = 'info-item';
                     itemDiv.innerHTML = `
                         <strong>${item.service}</strong> <span style="color: var(--text-secondary);">(포트 ${item.port})</span>
                         <br>버전: ${item.version || 'Unknown'}
-                    `;
-                } else if (type === 'cves') {
-                    const severity = getSeverityFromScore(item.severity);
-                    itemDiv.className = `info-item ${severity}`;
-                    itemDiv.innerHTML = `
-                        <strong>${item.id}</strong> <span class="status-badge">${severity.toUpperCase()}</span>
-                        <br><span style="color: var(--text-secondary);">${item.description}</span>
-                        <br>CVSS 점수: ${item.severity}
-                    `;
-                } else if (type === 'poc') {
-                    itemDiv.className = 'info-item';
-                    itemDiv.innerHTML = `
-                        <strong>${item.cve_id}</strong>
-                        <br><a href="${item.repository}" target="_blank" class="directory-url">${item.repository}</a>
-                        <br><span style="color: var(--text-secondary);">${item.description || '설명 없음'}</span>
-                        <div style="margin-top: 0.5rem; font-size: 0.8rem;">
-                            <i class="fas fa-star"></i> ${item.stars} | 
-                            <i class="fas fa-code"></i> ${item.language || 'N/A'}
-                        </div>
+                        ${item.scan_method ? `<br>탐지 방식: ${item.scan_method}` : ''}
                     `;
                 }
                 
@@ -2511,175 +2449,115 @@
             return section;
         }
 
-        function createNetworkInfoSection(data) {
+        function createScanSummarySection(data) {
             const section = document.createElement('div');
             section.className = 'info-section';
 
             const header = document.createElement('h4');
-            header.innerHTML = '<i class="fas fa-network-wired"></i>네트워크 정보';
+            header.innerHTML = '<i class="fas fa-chart-line"></i>FastNmap 스캔 요약';
             section.appendChild(header);
 
-            const networkInfo = data.network_analysis;
-            const routingInfo = data.routing_info;
+            const summary = data.scan_summary;
 
-            if (!networkInfo && !routingInfo) {
+            if (!summary) {
                 const noData = document.createElement('p');
-                noData.textContent = '네트워크 정보를 수집할 수 없습니다.';
+                noData.textContent = '스캔 요약 정보를 사용할 수 없습니다.';
                 noData.className = 'text-secondary';
                 section.appendChild(noData);
                 return section;
             }
 
-            // 네트워크 분석 정보
-            if (networkInfo) {
-                const analysisDiv = document.createElement('div');
-                analysisDiv.className = 'info-item';
-                
-                let analysisContent = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <strong><i class="fas fa-sitemap"></i> 네트워크 토폴로지 분석</strong>
-                        <span class="status-badge">${networkInfo.network_type?.toUpperCase() || 'UNKNOWN'}</span>
+            // 기본 스캔 정보
+            const basicInfo = document.createElement('div');
+            basicInfo.className = 'info-item';
+            basicInfo.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <strong><i class="fas fa-search"></i> ${data.scan_method || 'FastNmap 2-Stage'}</strong>
+                    <span class="status-badge status-${summary.status === 'completed' ? 'open' : 'closed'}">${summary.status?.toUpperCase() || 'UNKNOWN'}</span>
+                </div>
+                <div class="scan-stats">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0.5rem 0;">
+                        <div>
+                            <i class="fas fa-clock"></i> <strong>스캔 시간:</strong> ${data.scan_time || 'Unknown'}
+                        </div>
+                        <div>
+                            <i class="fas fa-network-wired"></i> <strong>대상 IP:</strong> ${data.ip || 'Unknown'}
+                        </div>
+                        <div>
+                            <i class="fas fa-door-open"></i> <strong>열린 포트:</strong> ${data.open_ports_count || 0}개
+                        </div>
+                        <div>
+                            <i class="fas fa-search"></i> <strong>총 스캔 포트:</strong> ${data.total_ports_scanned || 0}개
+                        </div>
                     </div>
-                `;
+                </div>
+            `;
+            section.appendChild(basicInfo);
 
-                if (networkInfo.default_gateway) {
-                    analysisContent += `
-                        <div style="margin-bottom: 0.5rem;">
-                            <i class="fas fa-route"></i> <strong>기본 게이트웨이:</strong> ${networkInfo.default_gateway}
-                        </div>
-                    `;
-                }
-
-                if (networkInfo.internal_networks && networkInfo.internal_networks.length > 0) {
-                    analysisContent += `
-                        <div style="margin-bottom: 0.5rem;">
-                            <i class="fas fa-home"></i> <strong>내부 네트워크:</strong>
-                            <div style="margin-left: 1.5rem; margin-top: 0.25rem;">
-                                ${networkInfo.internal_networks.map(net => `<span class="status-badge status-open">${net}</span>`).join(' ')}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                if (networkInfo.external_networks && networkInfo.external_networks.length > 0) {
-                    analysisContent += `
-                        <div style="margin-bottom: 0.5rem;">
-                            <i class="fas fa-globe"></i> <strong>외부 네트워크:</strong>
-                            <div style="margin-left: 1.5rem; margin-top: 0.25rem;">
-                                ${networkInfo.external_networks.map(net => `<span class="status-badge">${net}</span>`).join(' ')}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                if (networkInfo.security_implications && networkInfo.security_implications.length > 0) {
-                    analysisContent += `
-                        <div style="margin-top: 1rem;">
-                            <strong><i class="fas fa-shield-alt"></i> 보안 고려사항:</strong>
-                            <div style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                                ${networkInfo.security_implications.map(impl => `
-                                    <div class="info-item ${impl.severity?.toLowerCase() || 'info'}" style="margin: 0.25rem 0; padding: 0.5rem;">
-                                        <strong>${impl.type}:</strong> ${impl.description}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                analysisDiv.innerHTML = analysisContent;
-                section.appendChild(analysisDiv);
-            }
-
-            // 라우팅 테이블 정보
-            if (routingInfo && routingInfo.routes && routingInfo.routes.length > 0) {
-                const routingDiv = document.createElement('div');
-                routingDiv.className = 'info-item';
-                
-                let routingContent = `
+            // 포트 요약
+            if (summary.open_ports && summary.open_ports.length > 0) {
+                const portsDiv = document.createElement('div');
+                portsDiv.className = 'info-item';
+                portsDiv.innerHTML = `
                     <div style="margin-bottom: 0.75rem;">
-                        <strong><i class="fas fa-table"></i> 라우팅 테이블</strong>
+                        <strong><i class="fas fa-list"></i> 열린 포트 목록</strong>
                         <span style="color: var(--text-secondary); font-size: 0.875rem; margin-left: 0.5rem;">
-                            (${routingInfo.routes.length}개 경로)
+                            (${summary.open_ports.length}개 발견)
                         </span>
                     </div>
-                    <div style="max-height: 200px; overflow-y: auto;">
-                        <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: var(--accent-bg); color: var(--text-primary);">
-                                    <th style="padding: 0.5rem; text-align: left; border: 1px solid var(--border-color);">네트워크</th>
-                                    <th style="padding: 0.5rem; text-align: left; border: 1px solid var(--border-color);">넷마스크</th>
-                                    <th style="padding: 0.5rem; text-align: left; border: 1px solid var(--border-color);">게이트웨이</th>
-                                    <th style="padding: 0.5rem; text-align: left; border: 1px solid var(--border-color);">메트릭</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-
-                // 중요한 경로들만 표시 (기본 경로와 사설 네트워크)
-                const importantRoutes = routingInfo.routes.filter(route => {
-                    return route.network === '0.0.0.0' || 
-                           route.network?.startsWith('192.168.') || 
-                           route.network?.startsWith('10.') || 
-                           route.network?.startsWith('172.');
-                }).slice(0, 10); // 최대 10개만
-
-                importantRoutes.forEach(route => {
-                    const isDefault = route.network === '0.0.0.0';
-                    const rowClass = isDefault ? 'style="background: rgba(79, 209, 199, 0.1);"' : '';
-                    
-                    routingContent += `
-                        <tr ${rowClass}>
-                            <td style="padding: 0.5rem; border: 1px solid var(--border-color);">
-                                ${route.network || 'N/A'}
-                                ${isDefault ? '<i class="fas fa-star" style="color: var(--accent-blue); margin-left: 0.25rem;" title="기본 경로"></i>' : ''}
-                            </td>
-                            <td style="padding: 0.5rem; border: 1px solid var(--border-color);">${route.netmask || 'N/A'}</td>
-                            <td style="padding: 0.5rem; border: 1px solid var(--border-color);">${route.gateway || 'N/A'}</td>
-                            <td style="padding: 0.5rem; border: 1px solid var(--border-color);">${route.metric || 'N/A'}</td>
-                        </tr>
-                    `;
-                });
-
-                routingContent += `
-                            </tbody>
-                        </table>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                        ${summary.open_ports.map(port => `<span class="status-badge status-open">${port}</span>`).join('')}
                     </div>
                 `;
-
-                routingDiv.innerHTML = routingContent;
-                section.appendChild(routingDiv);
+                section.appendChild(portsDiv);
             }
 
-            // 네트워크 인터페이스 정보
-            if (routingInfo && routingInfo.interfaces && routingInfo.interfaces.length > 0) {
-                const interfacesDiv = document.createElement('div');
-                interfacesDiv.className = 'info-item';
-                
-                let interfacesContent = `
+            // 중요 서비스
+            if (summary.critical_services && summary.critical_services.length > 0) {
+                const criticalDiv = document.createElement('div');
+                criticalDiv.className = 'info-item high';
+                criticalDiv.innerHTML = `
                     <div style="margin-bottom: 0.75rem;">
-                        <strong><i class="fas fa-ethernet"></i> 네트워크 인터페이스</strong>
+                        <strong><i class="fas fa-exclamation-triangle"></i> 중요 서비스</strong>
                         <span style="color: var(--text-secondary); font-size: 0.875rem; margin-left: 0.5rem;">
-                            (${routingInfo.interfaces.length}개 감지)
+                            (보안 주의 필요)
                         </span>
                     </div>
-                    <div style="max-height: 150px; overflow-y: auto;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                        ${summary.critical_services.map(service => `<span class="status-badge">${service}</span>`).join('')}
+                    </div>
                 `;
+                section.appendChild(criticalDiv);
+            }
 
-                routingInfo.interfaces.slice(0, 8).forEach((iface, index) => {
-                    interfacesContent += `
-                        <div style="background: var(--primary-bg); padding: 0.5rem; margin: 0.25rem 0; border-radius: 4px; border-left: 3px solid var(--accent-blue);">
-                            <div style="font-weight: 500;">${iface.name || 'Unknown Interface'}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">
-                                ID: ${iface.id || 'N/A'} ${iface.mac ? `| MAC: ${iface.mac}` : ''}
-                            </div>
-                        </div>
-                    `;
-                });
+            // 웹 서비스
+            if (summary.web_services && summary.web_services.length > 0) {
+                const webDiv = document.createElement('div');
+                webDiv.className = 'info-item';
+                webDiv.innerHTML = `
+                    <div style="margin-bottom: 0.75rem;">
+                        <strong><i class="fas fa-globe"></i> 웹 서비스</strong>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                        ${summary.web_services.map(service => `<span class="status-badge status-open">${service}</span>`).join('')}
+                    </div>
+                `;
+                section.appendChild(webDiv);
+            }
 
-                interfacesContent += `</div>`;
-                interfacesDiv.innerHTML = interfacesContent;
-                section.appendChild(interfacesDiv);
+            // 일반 서비스
+            if (summary.common_services && summary.common_services.length > 0) {
+                const commonDiv = document.createElement('div');
+                commonDiv.className = 'info-item';
+                commonDiv.innerHTML = `
+                    <div style="margin-bottom: 0.75rem;">
+                        <strong><i class="fas fa-cogs"></i> 일반 서비스</strong>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                        ${summary.common_services.map(service => `<span class="status-badge">${service}</span>`).join('')}
+                    </div>
+                `;
+                section.appendChild(commonDiv);
             }
 
             return section;
