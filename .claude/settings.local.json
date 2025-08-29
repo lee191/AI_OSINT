@@ -11,7 +11,9 @@
       "Bash(curl:*)",
       "Bash(del:*)",
       "Bash(taskkill:*)",
-      "Bash(route:*)"
+      "Bash(route:*)",
+      "Bash(copy app.py app_backup.py)",
+      "Bash(sqlite3:*)"
     ],
     "deny": [],
     "ask": []
