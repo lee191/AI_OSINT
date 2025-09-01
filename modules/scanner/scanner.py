@@ -102,39 +102,81 @@ class PortScanner:
             print("1단계: 전체 포트 빠른 스캔 중...")
             stage1_cmd = ['nmap', '-p-', '--min-rate=1000', '-T4', host]
             
-            stage1_result = subprocess.run(stage1_cmd, capture_output=True, text=True, timeout=600)
-            open_ports = []
-            
-            print(f"1단계 명령어 결과코드: {stage1_result.returncode}")
-            print(f"1단계 stdout: {stage1_result.stdout[:500]}")
-            print(f"1단계 stderr: {stage1_result.stderr}")
-            
-            if stage1_result.returncode == 0:
-                print(f"1단계 완료. 출력: {stage1_result.stdout[:200]}...")
-                # 열린 포트 추출
-                lines = stage1_result.stdout.split('\n')
-                for line in lines:
-                    if '/tcp' in line and ('open' in line or 'filtered' in line):
-                        try:
-                            port = int(line.split('/')[0].strip())
-                            open_ports.append(port)
-                        except (ValueError, IndexError):
-                            continue
-                            
-                print(f"1단계 결과: {len(open_ports)}개 포트 발견 - {open_ports}")
-            else:
-                print(f"1단계 실패, 기본 포트로 진행: {stage1_result.stderr}")
+            try:
+                stage1_result = subprocess.run(stage1_cmd, capture_output=True, text=True, timeout=600)
+                open_ports = []
+                
+                print(f"1단계 명령어 결과코드: {stage1_result.returncode}")
+                print(f"1단계 stdout: {stage1_result.stdout[:500]}")
+                print(f"1단계 stderr: {stage1_result.stderr}")
+                
+            except subprocess.TimeoutExpired:
+                print("1단계 스캔 시간 초과, 기본 포트로 진행")
                 open_ports = [22, 23, 25, 53, 80, 135, 139, 443, 445, 993, 995, 3389, 5985, 8080, 8443]
+            except subprocess.SubprocessError as e:
+                print(f"1단계 스캔 프로세스 오류: {e}, 기본 포트로 진행")
+                open_ports = [22, 23, 25, 53, 80, 135, 139, 443, 445, 993, 995, 3389, 5985, 8080, 8443]
+            except Exception as e:
+                print(f"1단계 예상치 못한 오류: {e}, 기본 포트로 진행")
+                open_ports = [22, 23, 25, 53, 80, 135, 139, 443, 445, 993, 995, 3389, 5985, 8080, 8443]
+            else:
+                if stage1_result.returncode == 0:
+                    print(f"1단계 완료. 출력: {stage1_result.stdout[:200]}...")
+                    # 열린 포트 추출
+                    lines = stage1_result.stdout.split('\n')
+                    for line in lines:
+                        if '/tcp' in line and ('open' in line or 'filtered' in line):
+                            try:
+                                port = int(line.split('/')[0].strip())
+                                open_ports.append(port)
+                            except (ValueError, IndexError):
+                                continue
+                                
+                    print(f"1단계 결과: {len(open_ports)}개 포트 발견 - {open_ports}")
+                    
+                    # 1단계에서 포트를 찾지 못한 경우 기본 포트 사용
+                    if not open_ports:
+                        print("1단계에서 열린 포트를 찾지 못함, 기본 포트로 진행")
+                        open_ports = [22, 23, 25, 53, 80, 135, 139, 443, 445, 993, 995, 3389, 5985, 8080, 8443]
+                else:
+                    print(f"1단계 실패, 기본 포트로 진행: {stage1_result.stderr}")
+                    open_ports = [22, 23, 25, 53, 80, 135, 139, 443, 445, 993, 995, 3389, 5985, 8080, 8443]
             
             # 2단계: 발견된 포트에 대한 상세 스캔
             if open_ports:
                 print(f"2단계: {len(open_ports)}개 포트 상세 분석 중...")
                 port_list = ','.join(map(str, open_ports))
-                stage2_cmd = ['nmap', '-sCV', '-T4', '-p', port_list, host]
+                # Windows에서 권한 문제 해결을 위해 -sS 대신 -sT 사용 고려  
+                if platform.system().lower() == 'windows':
+                    stage2_cmd = ['nmap', '-sT', '-sV', '-sC', '-T4', '-p', port_list, host]
+                else:
+                    stage2_cmd = ['nmap', '-sCV', '-T4', '-p', port_list, host]
                 
-                stage2_result = subprocess.run(stage2_cmd, capture_output=True, text=True, timeout=180)
+                print(f"2단계 명령어: {' '.join(stage2_cmd)}")
+                try:
+                    # 동적 timeout: 포트 수에 따라 조정 (포트당 약 5-8초)
+                    base_timeout = 600  # 기본 10분
+                    per_port_time = 60   # 포트당 60초
+                    dynamic_timeout = max(base_timeout, len(open_ports) * per_port_time)
+                    # 최대 15분으로 제한
+                    timeout_seconds = min(dynamic_timeout, 900)
+                    
+                    print(f"2단계 timeout: {timeout_seconds}초 ({len(open_ports)}개 포트)")
+                    stage2_result = subprocess.run(stage2_cmd, capture_output=True, text=True, timeout=timeout_seconds)
+                    print(f"2단계 명령어 결과코드: {stage2_result.returncode}")
+                    print(f"2단계 stdout: {stage2_result.stdout[:500]}")
+                    print(f"2단계 stderr: {stage2_result.stderr}")
+                except subprocess.TimeoutExpired:
+                    print("2단계 스캔 시간 초과, 기본 서비스 정보 사용")
+                    stage2_result = None
+                except subprocess.SubprocessError as e:
+                    print(f"2단계 스캔 프로세스 오류: {e}, 기본 서비스 정보 사용")
+                    stage2_result = None
+                except Exception as e:
+                    print(f"2단계 예상치 못한 오류: {e}, 기본 서비스 정보 사용")
+                    stage2_result = None
                 
-                if stage2_result.returncode == 0:
+                if stage2_result and stage2_result.returncode == 0:
                     print(f"2단계 완료. 상세 정보 파싱 중...")
                     # 상세 스캔 결과 파싱
                     lines = stage2_result.stdout.split('\n')
@@ -170,7 +212,25 @@ class PortScanner:
                                 print(f"2단계 파싱 오류: {line} - {e}")
                                 continue
                 else:
-                    print(f"2단계 실패: {stage2_result.stderr}")
+                    if stage2_result:
+                        print(f"2단계 실패: {stage2_result.stderr}")
+                    # 기본 서비스 정보로 폴백
+                    for port in open_ports:
+                        service_name = self.get_service_name(port)
+                        port_info = {
+                            'port': port,
+                            'protocol': 'tcp',
+                            'state': 'open',
+                            'service': service_name,
+                            'scan_method': 'fallback_basic'
+                        }
+                        results['ports'].append(port_info)
+                        results['services'].append({
+                            'port': port,
+                            'service': service_name,
+                            'version': 'unknown',
+                            'scan_method': 'fallback_basic'
+                        })
             else:
                 print("발견된 포트가 없어 2단계 건너뜀")
                 

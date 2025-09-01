@@ -26,6 +26,9 @@
             --gradient-danger: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
             --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 70px;
+            --header-height: 70px;
         }
 
         * {
@@ -43,12 +46,443 @@
             overflow-x: hidden;
         }
 
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, rgba(79, 209, 199, 0.1) 0%, rgba(159, 122, 234, 0.1) 100%);
+        /* 레이아웃 구조 */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--secondary-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
             border-bottom: 1px solid var(--border-color);
-            padding: 2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding: 1.5rem 1rem;
+            justify-content: center;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            display: none;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            color: var(--accent-blue);
+            background: rgba(79, 209, 199, 0.1);
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar.collapsed .nav-item {
+            padding: 0.75rem 1rem;
+            justify-content: center;
+        }
+
+        .nav-item:hover {
+            background: rgba(79, 209, 199, 0.1);
+            border-left-color: var(--accent-blue);
+        }
+
+        .nav-item.active {
+            background: rgba(79, 209, 199, 0.15);
+            border-left-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .nav-text {
+            font-weight: 500;
+            white-space: nowrap;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            display: none;
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            background: var(--primary-bg);
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        /* 헤더 */
+        .main-header {
+            height: var(--header-height);
+            background: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--surface-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-badge i {
+            color: var(--accent-blue);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* 대시보드 컨텐츠 */
+        .dashboard-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 대시보드 위젯 그리드 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .widget-card {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
             position: relative;
+            overflow: hidden;
+        }
+
+        .widget-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .widget-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-secondary);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .widget-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .widget-title i {
+            color: var(--accent-blue);
+        }
+
+        .widget-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .widget-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* 스캔 상태 카드 */
+        .scan-status-card {
+            grid-column: span 2;
+            min-height: 200px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .status-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--surface-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .status-running .status-icon { color: var(--accent-blue); }
+        .status-completed .status-icon { color: var(--accent-green); }
+        .status-error .status-icon { color: var(--accent-red); }
+        .status-pending .status-icon { color: var(--accent-yellow); }
+
+        /* 최근 스캔 리스트 */
+        .recent-scans {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .scan-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s ease;
+        }
+
+        .scan-item:hover {
+            background: var(--surface-bg);
+        }
+
+        .scan-item:last-child {
+            border-bottom: none;
+        }
+
+        .scan-info {
+            flex: 1;
+        }
+
+        .scan-target {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .scan-time {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* 빠른 액션 버튼들 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            padding: 1rem;
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover {
+            background: var(--accent-bg);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: var(--accent-blue);
+        }
+
+        .action-btn i {
+            font-size: 1.5rem;
+            color: var(--accent-blue);
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* 페이지 컨텐츠 */
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+
+            .scan-status-card {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 0 1rem;
+            }
+
+            .header-stats {
+                display: none;
+            }
+
+            .dashboard-content {
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
         }
 
         .header::before {
@@ -1268,21 +1702,237 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-shield-alt"></i>
+    <div class="app-container">
+        <!-- 사이드바 -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">CyberScan Pro</div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <h1>CyberScan Pro</h1>
-            <p class="subtitle">Advanced OSINT & Security Analysis Platform</p>
-            <div class="security-badge">
-                <i class="fas fa-lock"></i>
-                <span>Enterprise Security Suite</span>
-            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="nav-text">대시보드</span>
+                </div>
+                <div class="nav-item" data-page="scanner">
+                    <i class="fas fa-crosshairs"></i>
+                    <span class="nav-text">스캔 실행</span>
+                </div>
+                <div class="nav-item" data-page="results">
+                    <i class="fas fa-list-alt"></i>
+                    <span class="nav-text">스캔 결과</span>
+                </div>
+                <div class="nav-item" data-page="projects">
+                    <i class="fas fa-folder"></i>
+                    <span class="nav-text">프로젝트 관리</span>
+                </div>
+                <div class="nav-item" data-page="history">
+                    <i class="fas fa-history"></i>
+                    <span class="nav-text">스캔 이력</span>
+                </div>
+                <div class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">설정</span>
+                </div>
+            </nav>
         </div>
-    </div>
 
-    <div class="container">
+        <!-- 메인 컨텐츠 -->
+        <div class="main-content">
+            <div class="main-header">
+                <div class="header-left">
+                    <div>
+                        <div class="page-title" id="page-title">대시보드</div>
+                        <div class="breadcrumb">
+                            <i class="fas fa-home"></i>
+                            <span id="breadcrumb-text">홈 / 대시보드</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-stats">
+                        <div class="stat-badge">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                <div class="stat-value" id="active-projects">3</div>
+                                <div class="stat-label">활성 프로젝트</div>
+                            </div>
+                        </div>
+                        <div class="stat-badge">
+                            <i class="fas fa-search"></i>
+                            <div>
+                                <div class="stat-value" id="total-scans">127</div>
+                                <div class="stat-label">총 스캔</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <!-- 대시보드 페이지 -->
+                <div class="page-content active" id="dashboard-page">
+                    <div class="dashboard-grid">
+                        <!-- 활성 스캔 위젯 -->
+                        <div class="widget-card">
+                            <div class="widget-header">
+                                <div class="widget-title">
+                                    <i class="fas fa-spinner fa-pulse"></i>
+                                    활성 스캔
+                                </div>
+                            </div>
+                            <div class="widget-value" id="active-scans-count">2</div>
+                            <div class="widget-subtitle">현재 실행 중인 스캔</div>
+                        </div>
+
+                        <!-- 완료된 스캔 위젯 -->
+                        <div class="widget-card">
+                            <div class="widget-header">
+                                <div class="widget-title">
+                                    <i class="fas fa-check-circle"></i>
+                                    완료된 스캔
+                                </div>
+                            </div>
+                            <div class="widget-value" id="completed-scans-count">125</div>
+                            <div class="widget-subtitle">성공적으로 완료</div>
+                        </div>
+
+                        <!-- 발견된 포트 위젯 -->
+                        <div class="widget-card">
+                            <div class="widget-header">
+                                <div class="widget-title">
+                                    <i class="fas fa-network-wired"></i>
+                                    발견된 포트
+                                </div>
+                            </div>
+                            <div class="widget-value" id="total-ports">1,247</div>
+                            <div class="widget-subtitle">열린 포트 총합</div>
+                        </div>
+
+                        <!-- 취약점 위젯 -->
+                        <div class="widget-card">
+                            <div class="widget-header">
+                                <div class="widget-title">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    중요 서비스
+                                </div>
+                            </div>
+                            <div class="widget-value" id="critical-services">43</div>
+                            <div class="widget-subtitle">보안 주의 필요</div>
+                        </div>
+
+                        <!-- 스캔 상태 요약 -->
+                        <div class="widget-card scan-status-card">
+                            <div class="widget-header">
+                                <div class="widget-title">
+                                    <i class="fas fa-chart-pie"></i>
+                                    스캔 상태 요약
+                                </div>
+                            </div>
+                            <div class="status-grid">
+                                <div class="status-item status-running">
+                                    <i class="fas fa-spinner fa-pulse status-icon"></i>
+                                    <div class="stat-value">2</div>
+                                    <div class="stat-label">실행 중</div>
+                                </div>
+                                <div class="status-item status-completed">
+                                    <i class="fas fa-check-circle status-icon"></i>
+                                    <div class="stat-value">125</div>
+                                    <div class="stat-label">완료</div>
+                                </div>
+                                <div class="status-item status-error">
+                                    <i class="fas fa-times-circle status-icon"></i>
+                                    <div class="stat-value">3</div>
+                                    <div class="stat-label">오류</div>
+                                </div>
+                                <div class="status-item status-pending">
+                                    <i class="fas fa-clock status-icon"></i>
+                                    <div class="stat-value">0</div>
+                                    <div class="stat-label">대기</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 최근 스캔 -->
+                        <div class="widget-card scan-status-card">
+                            <div class="widget-header">
+                                <div class="widget-title">
+                                    <i class="fas fa-history"></i>
+                                    최근 스캔
+                                </div>
+                            </div>
+                            <div class="recent-scans">
+                                <div class="scan-item">
+                                    <div class="scan-info">
+                                        <div class="scan-target">localhost</div>
+                                        <div class="scan-time">2분 전 • 43개 포트 발견</div>
+                                    </div>
+                                    <span class="status-badge status-running">실행중</span>
+                                </div>
+                                <div class="scan-item">
+                                    <div class="scan-info">
+                                        <div class="scan-target">google.com</div>
+                                        <div class="scan-time">10분 전 • 3개 포트 발견</div>
+                                    </div>
+                                    <span class="status-badge status-open">완료</span>
+                                </div>
+                                <div class="scan-item">
+                                    <div class="scan-info">
+                                        <div class="scan-target">github.com</div>
+                                        <div class="scan-time">1시간 전 • 2개 포트 발견</div>
+                                    </div>
+                                    <span class="status-badge status-open">완료</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 빠른 액션 -->
+                    <div class="widget-card">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <i class="fas fa-bolt"></i>
+                                빠른 액션
+                            </div>
+                        </div>
+                        <div class="quick-actions">
+                            <div class="action-btn" onclick="showPage('scanner')">
+                                <i class="fas fa-play"></i>
+                                <div class="action-content">
+                                    <div class="action-title">새 스캔 시작</div>
+                                    <div class="action-desc">단일 또는 대량 스캔 실행</div>
+                                </div>
+                            </div>
+                            <div class="action-btn" onclick="showPage('projects')">
+                                <i class="fas fa-folder-plus"></i>
+                                <div class="action-content">
+                                    <div class="action-title">프로젝트 생성</div>
+                                    <div class="action-desc">새로운 프로젝트 생성</div>
+                                </div>
+                            </div>
+                            <div class="action-btn" onclick="showPage('results')">
+                                <i class="fas fa-chart-line"></i>
+                                <div class="action-content">
+                                    <div class="action-title">결과 분석</div>
+                                    <div class="action-desc">스캔 결과 상세 보기</div>
+                                </div>
+                            </div>
+                            <div class="action-btn" onclick="showPage('history')">
+                                <i class="fas fa-download"></i>
+                                <div class="action-content">
+                                    <div class="action-title">보고서 내보내기</div>
+                                    <div class="action-desc">스캔 결과 보고서 생성</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 스캔 실행 페이지 -->
+                <div class="page-content" id="scanner-page">
         <!-- 프로젝트 관리 섹션 -->
         <div class="project-section">
             <div class="project-header">
@@ -1514,11 +2164,70 @@
         let projects = [];
         let currentProject = null;
         let currentBulkMode = false;
+        let currentPage = 'dashboard';
 
-        // 페이지 로드 시 프로젝트 목록 불러오기
+        // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', function() {
             loadProjects();
+            initializeSidebar();
         });
+
+        // 사이드바 관련 함수들
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function initializeSidebar() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const page = this.getAttribute('data-page');
+                    showPage(page);
+                });
+            });
+        }
+
+        function showPage(pageId) {
+            currentPage = pageId;
+
+            // 사이드바 활성 상태 업데이트
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+
+            // 페이지 컨텐츠 표시/숨김
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            const targetPage = document.getElementById(`${pageId}-page`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+
+            // 페이지 제목과 breadcrumb 업데이트
+            updatePageHeader(pageId);
+        }
+
+        function updatePageHeader(pageId) {
+            const pageTitle = document.getElementById('page-title');
+            const breadcrumbText = document.getElementById('breadcrumb-text');
+            
+            const pageConfig = {
+                'dashboard': { title: '대시보드', breadcrumb: '홈 / 대시보드' },
+                'scanner': { title: '스캔 실행', breadcrumb: '홈 / 스캔 실행' },
+                'results': { title: '스캔 결과', breadcrumb: '홈 / 스캔 결과' },
+                'projects': { title: '프로젝트 관리', breadcrumb: '홈 / 프로젝트 관리' },
+                'history': { title: '스캔 이력', breadcrumb: '홈 / 스캔 이력' },
+                'settings': { title: '설정', breadcrumb: '홈 / 설정' }
+            };
+
+            const config = pageConfig[pageId] || pageConfig['dashboard'];
+            pageTitle.textContent = config.title;
+            breadcrumbText.textContent = config.breadcrumb;
+        }
 
         // 프로젝트 관리 함수들
         function loadProjects() {
