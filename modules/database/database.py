@@ -256,3 +256,57 @@ class DatabaseManager:
             'project_scans': project_scans,
             'last_scan': last_scan
         }
+    
+    def get_project_statistics(self, project_id: int) -> Dict[str, Any]:
+        """프로젝트 통계 정보"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        # 기본 통계
+        cursor.execute('''
+            SELECT COUNT(*) as total_scans,
+                   COUNT(DISTINCT domain) as unique_domains,
+                   COUNT(DISTINCT subdomain) as unique_subdomains,
+                   MIN(scan_date) as first_scan,
+                   MAX(scan_date) as last_scan
+            FROM scan_results 
+            WHERE project_id = ?
+        ''', (project_id,))
+        
+        basic_stats = cursor.fetchone()
+        
+        # 포트 및 서비스 통계
+        cursor.execute('''
+            SELECT ports, services, vulnerabilities
+            FROM scan_results 
+            WHERE project_id = ?
+        ''', (project_id,))
+        
+        total_ports = 0
+        total_services = 0
+        total_vulnerabilities = 0
+        
+        for row in cursor.fetchall():
+            try:
+                ports = json.loads(row[0] or '[]')
+                services = json.loads(row[1] or '[]')
+                vulnerabilities = json.loads(row[2] or '[]')
+                
+                total_ports += len(ports)
+                total_services += len(services)
+                total_vulnerabilities += len(vulnerabilities)
+            except:
+                pass
+        
+        conn.close()
+        
+        return {
+            'total_scans': basic_stats[0] if basic_stats else 0,
+            'unique_domains': basic_stats[1] if basic_stats else 0,
+            'unique_subdomains': basic_stats[2] if basic_stats else 0,
+            'first_scan': basic_stats[3] if basic_stats else None,
+            'last_scan': basic_stats[4] if basic_stats else None,
+            'total_ports': total_ports,
+            'total_services': total_services,
+            'total_vulnerabilities': total_vulnerabilities
+        }

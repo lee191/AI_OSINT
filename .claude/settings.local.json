@@ -13,7 +13,14 @@
       "Bash(taskkill:*)",
       "Bash(route:*)",
       "Bash(copy app.py app_backup.py)",
-      "Bash(sqlite3:*)"
+      "Bash(sqlite3:*)",
+      "WebFetch(domain:127.0.0.1)",
+      "Bash(grep:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(cmd /c:*)",
+      "Bash(wmic process:*)"
     ],
     "deny": [],
     "ask": []

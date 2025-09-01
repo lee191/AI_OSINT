@@ -557,101 +557,6 @@
             padding: 0 2rem;
         }
 
-        /* Scan Section */
-        .scan-section {
-            background: var(--secondary-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .scan-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-secondary);
-        }
-
-        .scan-form {
-            display: flex;
-            gap: 1rem;
-            align-items: stretch;
-            margin-bottom: 2rem;
-        }
-
-        .input-wrapper {
-            flex: 1;
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-            z-index: 2;
-        }
-
-        .scan-input {
-            width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
-            background: var(--surface-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.3s ease;
-        }
-
-        .scan-input:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(79, 209, 199, 0.1);
-        }
-
-        .scan-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .scan-btn {
-            padding: 1rem 2rem;
-            background: var(--gradient-secondary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-
-        .scan-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .scan-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .scan-btn i {
-            font-size: 1.1rem;
-        }
 
         /* Progress Bar */
         .progress-container {
@@ -1003,142 +908,6 @@
         .bg-low { background: rgba(104, 211, 145, 0.1); }
         .bg-info { background: rgba(79, 209, 199, 0.1); }
 
-        /* Project Management Styles */
-        .project-section {
-            background: var(--secondary-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .project-header h2 {
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .project-header h2 i {
-            color: var(--accent-blue);
-        }
-
-        .project-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .project-select {
-            min-width: 250px;
-            padding: 0.75rem 1rem;
-            background: var(--surface-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .project-select:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(79, 209, 199, 0.1);
-        }
-
-        .project-select option {
-            background: var(--surface-bg);
-            color: var(--text-primary);
-        }
-
-        .project-btn {
-            padding: 0.75rem 1.5rem;
-            background: var(--gradient-secondary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-
-        .project-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .project-btn.secondary {
-            background: var(--accent-bg);
-            color: var(--text-primary);
-        }
-
-        .project-btn.secondary:hover {
-            background: var(--border-color);
-        }
-
-        .project-info {
-            background: var(--surface-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .project-details {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .project-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .project-description {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        .project-stats {
-            display: flex;
-            gap: 2rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .stat-item i {
-            color: var(--accent-blue);
-        }
 
         /* Modal Styles */
         .modal {
@@ -1699,6 +1468,210 @@
             }
         }
 
+        /* 개선된 최근 스캔 위젯 스타일 */
+        .recent-scans-widget .widget-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .recent-scans-widget .widget-link:hover {
+            transform: translateX(2px);
+        }
+
+        .recent-scans-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .loading-scans {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .loading-scans i {
+            color: var(--accent-blue);
+        }
+
+        .scan-card {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .scan-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-blue);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .scan-card:hover::before {
+            opacity: 1;
+        }
+
+        .scan-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .scan-target-info {
+            flex: 1;
+        }
+
+        .scan-target-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .scan-target-ip {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .scan-project-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+
+        .scan-card-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .scan-detail-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem;
+            background: var(--primary-bg);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .scan-detail-icon {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .scan-detail-value {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 0.125rem;
+        }
+
+        .scan-detail-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .scan-detail-item.ports {
+            color: var(--accent-blue);
+        }
+
+        .scan-detail-item.services {
+            color: var(--accent-green);
+        }
+
+        .scan-detail-item.vulnerabilities {
+            color: var(--accent-red);
+        }
+
+        .scan-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .scan-timestamp {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .scan-timestamp i {
+            color: var(--accent-blue);
+        }
+
+        .scan-status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .scan-status-completed {
+            background: rgba(104, 211, 145, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(104, 211, 145, 0.3);
+        }
+
+        .scan-status-running {
+            background: rgba(246, 224, 94, 0.15);
+            color: var(--accent-yellow);
+            border: 1px solid rgba(246, 224, 94, 0.3);
+        }
+
+        .scan-status-error {
+            background: rgba(252, 129, 129, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(252, 129, 129, 0.3);
+        }
+
+        .no-scans-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .no-scans-message i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent-bg);
+        }
+
     </style>
 </head>
 <body>
@@ -1720,10 +1693,6 @@
                 <div class="nav-item" data-page="scanner">
                     <i class="fas fa-crosshairs"></i>
                     <span class="nav-text">스캔 실행</span>
-                </div>
-                <div class="nav-item" data-page="results">
-                    <i class="fas fa-list-alt"></i>
-                    <span class="nav-text">스캔 결과</span>
                 </div>
                 <div class="nav-item" data-page="projects">
                     <i class="fas fa-folder"></i>
@@ -1752,29 +1721,30 @@
                         </div>
                     </div>
                 </div>
-                <div class="header-right">
-                    <div class="header-stats">
-                        <div class="stat-badge">
-                            <i class="fas fa-shield-alt"></i>
-                            <div>
-                                <div class="stat-value" id="active-projects">3</div>
-                                <div class="stat-label">활성 프로젝트</div>
-                            </div>
-                        </div>
-                        <div class="stat-badge">
-                            <i class="fas fa-search"></i>
-                            <div>
-                                <div class="stat-value" id="total-scans">127</div>
-                                <div class="stat-label">총 스캔</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="dashboard-content">
                 <!-- 대시보드 페이지 -->
                 <div class="page-content active" id="dashboard-page">
+                    <!-- 프로젝트 선택 섹션 -->
+                    <div class="widget-card" style="margin-bottom: 2rem;">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <i class="fas fa-folder"></i>
+                                프로젝트 선택
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                            <select id="dashboard-project-select" class="form-input" style="min-width: 250px; max-width: 400px; flex: 1;">
+                                <option value="">전체 프로젝트</option>
+                            </select>
+                            <div id="selected-project-info" style="color: var(--text-secondary); font-size: 0.875rem; display: none;">
+                                <i class="fas fa-info-circle"></i>
+                                <span id="selected-project-details"></span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="dashboard-grid">
                         <!-- 활성 스캔 위젯 -->
                         <div class="widget-card">
@@ -1857,34 +1827,21 @@
                         </div>
 
                         <!-- 최근 스캔 -->
-                        <div class="widget-card scan-status-card">
+                        <div class="widget-card recent-scans-widget">
                             <div class="widget-header">
                                 <div class="widget-title">
                                     <i class="fas fa-history"></i>
                                     최근 스캔
                                 </div>
+                                <a href="/scan-history" class="widget-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    모두 보기
+                                </a>
                             </div>
-                            <div class="recent-scans">
-                                <div class="scan-item">
-                                    <div class="scan-info">
-                                        <div class="scan-target">localhost</div>
-                                        <div class="scan-time">2분 전 • 43개 포트 발견</div>
-                                    </div>
-                                    <span class="status-badge status-running">실행중</span>
-                                </div>
-                                <div class="scan-item">
-                                    <div class="scan-info">
-                                        <div class="scan-target">google.com</div>
-                                        <div class="scan-time">10분 전 • 3개 포트 발견</div>
-                                    </div>
-                                    <span class="status-badge status-open">완료</span>
-                                </div>
-                                <div class="scan-item">
-                                    <div class="scan-info">
-                                        <div class="scan-target">github.com</div>
-                                        <div class="scan-time">1시간 전 • 2개 포트 발견</div>
-                                    </div>
-                                    <span class="status-badge status-open">완료</span>
+                            <div class="recent-scans-container">
+                                <div class="loading-scans">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>스캔 기록 로딩 중...</span>
                                 </div>
                             </div>
                         </div>
@@ -1931,232 +1888,9 @@
                     </div>
                 </div>
 
-                <!-- 스캔 실행 페이지 -->
-                <div class="page-content" id="scanner-page">
-        <!-- 프로젝트 관리 섹션 -->
-        <div class="project-section">
-            <div class="project-header">
-                <h2><i class="fas fa-folder"></i> 프로젝트 관리</h2>
-                <div class="project-actions">
-                    <select id="project-select" class="project-select">
-                        <option value="">프로젝트를 선택하세요...</option>
-                    </select>
-                    <button class="project-btn" id="new-project-btn" onclick="showNewProjectModal()">
-                        <i class="fas fa-plus"></i>
-                        <span>새 프로젝트</span>
-                    </button>
-                    <button class="project-btn secondary" id="manage-projects-btn" onclick="showProjectManager()">
-                        <i class="fas fa-cog"></i>
-                        <span>프로젝트 관리</span>
-                    </button>
-                </div>
-            </div>
-            <div class="project-info" id="project-info" style="display: none;">
-                <div class="project-details">
-                    <div class="project-name" id="current-project-name"></div>
-                    <div class="project-description" id="current-project-description"></div>
-                    <div class="project-stats">
-                        <span class="stat-item">
-                            <i class="fas fa-calendar"></i>
-                            <span id="project-updated">마지막 업데이트: </span>
-                        </span>
-                        <span class="stat-item">
-                            <i class="fas fa-search"></i>
-                            <span id="project-scans">스캔 개수: </span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="scan-section">
-            <div class="scan-header">
-                <h3><i class="fas fa-crosshairs"></i> 스캔 대상 설정</h3>
-                <div class="input-mode-toggle">
-                    <button class="mode-btn active" id="single-mode-btn" onclick="switchInputMode('single')">
-                        <i class="fas fa-search"></i>
-                        단일 대상
-                    </button>
-                    <button class="mode-btn" id="bulk-mode-btn" onclick="switchInputMode('bulk')">
-                        <i class="fas fa-list"></i>
-                        대량 스캔
-                    </button>
-                </div>
-            </div>
-
-            <!-- 단일 대상 입력 모드 -->
-            <div class="input-mode" id="single-input-mode">
-                <div class="scan-form">
-                    <div class="input-wrapper">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="domain-input" class="scan-input" 
-                               placeholder="대상 도메인 또는 IP 주소를 입력하세요 (예: example.com, 192.168.1.1)" />
-                    </div>
-                    <button class="scan-btn" id="scan-btn" onclick="startScan()">
-                        <i class="fas fa-play"></i>
-                        <span>스캔 시작</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- 대량 스캔 입력 모드 -->
-            <div class="input-mode" id="bulk-input-mode" style="display: none;">
-                <div class="bulk-input-section">
-                    <div class="bulk-textarea-wrapper">
-                        <label for="bulk-targets" class="bulk-label">
-                            <i class="fas fa-list-ul"></i>
-                            스캔 대상 목록 (한 줄에 하나씩 입력)
-                        </label>
-                        <textarea id="bulk-targets" class="bulk-textarea" 
-                                  placeholder="example.com&#10;192.168.1.1&#10;subdomain.example.com&#10;10.0.0.1&#10;&#10;쉼표로 구분하여 입력도 가능:&#10;example.com, 192.168.1.1, test.com"></textarea>
-                        <div class="bulk-info">
-                            <span class="target-count" id="target-count">0개 대상</span>
-                            <div class="bulk-actions">
-                                <button class="bulk-action-btn" onclick="clearBulkTargets()">
-                                    <i class="fas fa-trash"></i>
-                                    전체 삭제
-                                </button>
-                                <button class="bulk-action-btn" onclick="loadSampleTargets()">
-                                    <i class="fas fa-magic"></i>
-                                    샘플 로드
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="scan-btn bulk-scan-btn" id="bulk-scan-btn" onclick="startBulkScan()">
-                        <i class="fas fa-rocket"></i>
-                        <span>대량 스캔 시작</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- 단일 스캔 진행률 -->
-            <div class="progress-container" id="progress-container">
-                <div class="progress-wrapper">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
-                    </div>
-                    <div class="progress-info">
-                        <span class="progress-text" id="progress-text">스캔 준비 중...</span>
-                        <span id="progress-percentage">0%</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 대량 스캔 진행률 -->
-            <div class="bulk-progress-container" id="bulk-progress-container" style="display: none;">
-                <div class="bulk-progress-header">
-                    <div class="bulk-progress-title">대량 스캔 진행 상황</div>
-                    <div class="bulk-progress-stats" id="bulk-progress-stats">0/0 완료</div>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="bulk-progress-fill"></div>
-                </div>
-                <div class="progress-info">
-                    <span class="progress-text" id="bulk-progress-text">스캔 준비 중...</span>
-                    <span id="bulk-progress-percentage">0%</span>
-                </div>
-                <div class="target-progress-list" id="target-progress-list">
-                    <!-- 개별 타겟 진행 상황이 여기에 표시됩니다 -->
-                </div>
-            </div>
-        </div>
-
-
-        <div class="results-container" id="results-container">
-            <div class="nav-tabs">
-                <button class="nav-tab active" onclick="showTab('scan-results')">
-                    <i class="fas fa-list-ul"></i>
-                    <span>FastNmap 스캔 결과</span>
-                </button>
-            </div>
-
-            <div class="tab-content active" id="scan-results">
-                <h3><i class="fas fa-search-plus"></i> 상세 스캔 결과</h3>
-                <div id="results-content"></div>
-            </div>
-
-        </div>
-    </div>
 
     <!-- 모달들 -->
-    <!-- 새 프로젝트 생성 모달 -->
-    <div class="modal" id="new-project-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-plus"></i>새 프로젝트 생성</h3>
-                <button class="modal-close" onclick="closeModal('new-project-modal')">&times;</button>
-            </div>
-            <form id="new-project-form">
-                <div class="form-group">
-                    <label for="project-name">프로젝트 이름 *</label>
-                    <input type="text" id="project-name" class="form-input" required 
-                           placeholder="프로젝트 이름을 입력하세요">
-                </div>
-                <div class="form-group">
-                    <label for="project-description">설명</label>
-                    <textarea id="project-description" class="form-input form-textarea" 
-                              placeholder="프로젝트에 대한 설명을 입력하세요"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="project-color">프로젝트 색상</label>
-                    <div class="color-picker-group">
-                        <input type="color" id="project-color" class="color-picker" value="#4fd1c7">
-                        <span>프로젝트를 구분할 색상을 선택하세요</span>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" onclick="closeModal('new-project-modal')">취소</button>
-                    <button type="submit" class="btn-primary">프로젝트 생성</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- 프로젝트 관리 모달 -->
-    <div class="modal" id="project-manager-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-cog"></i>프로젝트 관리</h3>
-                <button class="modal-close" onclick="closeModal('project-manager-modal')">&times;</button>
-            </div>
-            <div class="project-list" id="project-list">
-                <!-- 프로젝트 목록이 여기에 동적으로 추가됩니다 -->
-            </div>
-        </div>
-    </div>
-
-    <!-- 프로젝트 편집 모달 -->
-    <div class="modal" id="edit-project-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-edit"></i>프로젝트 편집</h3>
-                <button class="modal-close" onclick="closeModal('edit-project-modal')">&times;</button>
-            </div>
-            <form id="edit-project-form">
-                <input type="hidden" id="edit-project-id">
-                <div class="form-group">
-                    <label for="edit-project-name">프로젝트 이름 *</label>
-                    <input type="text" id="edit-project-name" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit-project-description">설명</label>
-                    <textarea id="edit-project-description" class="form-input form-textarea"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="edit-project-color">프로젝트 색상</label>
-                    <div class="color-picker-group">
-                        <input type="color" id="edit-project-color" class="color-picker">
-                        <span>프로젝트를 구분할 색상을 선택하세요</span>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" onclick="closeModal('edit-project-modal')">취소</button>
-                    <button type="submit" class="btn-primary">변경사항 저장</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <script>
         let currentScanId = null;
@@ -2165,11 +1899,15 @@
         let currentProject = null;
         let currentBulkMode = false;
         let currentPage = 'dashboard';
+        let selectedDashboardProject = null;
 
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', function() {
             loadProjects();
             initializeSidebar();
+            initializeDashboardProjectSelect();
+            initializeProjectSelect();
+            loadDashboardData();
         });
 
         // 사이드바 관련 함수들
@@ -2190,6 +1928,24 @@
 
         function showPage(pageId) {
             currentPage = pageId;
+
+            // 스캐너 페이지는 별도 페이지로 이동
+            if (pageId === 'scanner') {
+                window.location.href = '/scanner';
+                return;
+            }
+
+            // 프로젝트 관리 페이지는 별도 페이지로 이동  
+            if (pageId === 'projects') {
+                window.location.href = '/projects';
+                return;
+            }
+
+            // 스캔 이력 페이지는 별도 페이지로 이동
+            if (pageId === 'history') {
+                window.location.href = '/scan-history';
+                return;
+            }
 
             // 사이드바 활성 상태 업데이트
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -2218,7 +1974,6 @@
             const pageConfig = {
                 'dashboard': { title: '대시보드', breadcrumb: '홈 / 대시보드' },
                 'scanner': { title: '스캔 실행', breadcrumb: '홈 / 스캔 실행' },
-                'results': { title: '스캔 결과', breadcrumb: '홈 / 스캔 결과' },
                 'projects': { title: '프로젝트 관리', breadcrumb: '홈 / 프로젝트 관리' },
                 'history': { title: '스캔 이력', breadcrumb: '홈 / 스캔 이력' },
                 'settings': { title: '설정', breadcrumb: '홈 / 설정' }
@@ -2231,13 +1986,14 @@
 
         // 프로젝트 관리 함수들
         function loadProjects() {
-            fetch('/projects')
+            fetch('/api/projects')
             .then(response => response.json())
             .then(data => {
                 projects = data;
                 updateProjectSelect();
+                updateDashboardProjectSelect();
                 
-                // 첫 번째 프로젝트를 기본으로 선택
+                // 첫 번째 프로젝트를 기본으로 선택 (스캐너 페이지용)
                 if (projects.length > 0) {
                     selectProject(projects[0].id);
                 }
@@ -2249,6 +2005,8 @@
 
         function updateProjectSelect() {
             const select = document.getElementById('project-select');
+            if (!select) return;
+            
             select.innerHTML = '<option value="">프로젝트를 선택하세요...</option>';
             
             projects.forEach(project => {
@@ -2266,34 +2024,46 @@
 
             currentProject = project;
             const select = document.getElementById('project-select');
-            select.value = projectId;
+            if (select) {
+                select.value = projectId;
+            }
 
-            // 프로젝트 정보 표시
+            // 프로젝트 정보 표시 (스캐너 페이지에서만 사용)
             const projectInfo = document.getElementById('project-info');
             const projectName = document.getElementById('current-project-name');
             const projectDescription = document.getElementById('current-project-description');
             const projectUpdated = document.getElementById('project-updated');
             const projectScans = document.getElementById('project-scans');
 
-            projectName.textContent = project.name;
-            projectName.style.color = project.color;
-            projectDescription.textContent = project.description || '설명이 없습니다.';
-            projectUpdated.textContent = `마지막 업데이트: ${new Date(project.updated_date).toLocaleString()}`;
-            projectScans.textContent = `스캔 개수: ${project.scan_count}개`;
+            if (projectInfo && projectName && projectDescription && projectUpdated && projectScans) {
+                projectName.textContent = project.name;
+                projectName.style.color = project.color;
+                projectDescription.textContent = project.description || '설명이 없습니다.';
+                projectUpdated.textContent = `마지막 업데이트: ${new Date(project.updated_date).toLocaleString()}`;
+                projectScans.textContent = `스캔 개수: ${project.scan_count}개`;
 
-            projectInfo.style.display = 'block';
+                projectInfo.style.display = 'block';
+            }
         }
 
-        // 프로젝트 선택 이벤트
-        document.getElementById('project-select').addEventListener('change', function() {
-            const projectId = this.value;
-            if (projectId) {
-                selectProject(projectId);
-            } else {
-                document.getElementById('project-info').style.display = 'none';
-                currentProject = null;
+        // 프로젝트 선택 이벤트 (스캐너 페이지용)
+        function initializeProjectSelect() {
+            const projectSelect = document.getElementById('project-select');
+            if (projectSelect) {
+                projectSelect.addEventListener('change', function() {
+                    const projectId = this.value;
+                    if (projectId) {
+                        selectProject(projectId);
+                    } else {
+                        const projectInfo = document.getElementById('project-info');
+                        if (projectInfo) {
+                            projectInfo.style.display = 'none';
+                        }
+                        currentProject = null;
+                    }
+                });
             }
-        });
+        }
 
         // 모달 관련 함수들
         function showModal(modalId) {
@@ -2361,7 +2131,7 @@
             if (!project) return;
 
             if (confirm(`'${project.name}' 프로젝트를 삭제하시겠습니까?\n관련된 모든 스캔 결과도 함께 삭제됩니다.`)) {
-                fetch(`/projects/${projectId}`, {
+                fetch(`/api/projects/${projectId}`, {
                     method: 'DELETE'
                 })
                 .then(response => response.json())
@@ -2389,7 +2159,7 @@
                 color: document.getElementById('project-color').value
             };
 
-            fetch('/projects', {
+            fetch('/api/projects', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -2421,7 +2191,7 @@
                 color: document.getElementById('edit-project-color').value
             };
 
-            fetch(`/projects/${projectId}`, {
+            fetch(`/api/projects/${projectId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -3053,12 +2823,272 @@
             }
         }
 
-        // Enter 키로 스캔 시작
-        document.getElementById('domain-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                startScan();
+        // 대시보드 프로젝트 선택 관련 함수들
+        function initializeDashboardProjectSelect() {
+            const dashboardSelect = document.getElementById('dashboard-project-select');
+            if (dashboardSelect) {
+                dashboardSelect.addEventListener('change', function() {
+                    const projectId = this.value;
+                    if (projectId) {
+                        selectedDashboardProject = projects.find(p => p.id == projectId);
+                    } else {
+                        selectedDashboardProject = null;
+                    }
+                    updateDashboardProjectInfo();
+                    loadDashboardData();
+                });
             }
-        });
+        }
+
+        function updateDashboardProjectSelect() {
+            const dashboardSelect = document.getElementById('dashboard-project-select');
+            if (!dashboardSelect) return;
+
+            // 기존 옵션 제거 (첫 번째 옵션 제외)
+            while (dashboardSelect.children.length > 1) {
+                dashboardSelect.removeChild(dashboardSelect.lastChild);
+            }
+            
+            projects.forEach(project => {
+                const option = document.createElement('option');
+                option.value = project.id;
+                option.textContent = project.name;
+                option.style.color = project.color;
+                dashboardSelect.appendChild(option);
+            });
+        }
+
+        function updateDashboardProjectInfo() {
+            const infoDiv = document.getElementById('selected-project-info');
+            const detailsSpan = document.getElementById('selected-project-details');
+            
+            if (selectedDashboardProject) {
+                detailsSpan.textContent = `${selectedDashboardProject.description || '설명 없음'} | ${selectedDashboardProject.scan_count || 0}개 스캔`;
+                infoDiv.style.display = 'flex';
+                infoDiv.style.alignItems = 'center';
+                infoDiv.style.gap = '0.5rem';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+
+        function loadDashboardData() {
+            loadDashboardStats();
+            loadRecentScans();
+        }
+
+        function loadDashboardStats() {
+            const apiUrl = selectedDashboardProject 
+                ? `/api/projects/${selectedDashboardProject.id}/stats`
+                : '/api/dashboard/stats';
+            
+            fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                updateDashboardWidgets(data);
+            })
+            .catch(error => {
+                console.error('대시보드 통계 로드 실패:', error);
+                // 기본값으로 폴백
+                updateDashboardWidgets({
+                    active_scans: 0,
+                    completed_scans: 0,
+                    total_ports: 0,
+                    critical_services: 0,
+                    running_scans: 0,
+                    error_scans: 0,
+                    pending_scans: 0
+                });
+            });
+        }
+
+        function updateDashboardWidgets(data) {
+            // 위젯 값 업데이트
+            const activeScansCount = document.getElementById('active-scans-count');
+            const completedScansCount = document.getElementById('completed-scans-count');
+            const totalPorts = document.getElementById('total-ports');
+            const criticalServices = document.getElementById('critical-services');
+            
+            if (activeScansCount) activeScansCount.textContent = data.active_scans || 0;
+            if (completedScansCount) completedScansCount.textContent = data.completed_scans || 0;
+            if (totalPorts) totalPorts.textContent = (data.total_ports || 0).toLocaleString();
+            if (criticalServices) criticalServices.textContent = data.critical_services || 0;
+
+            // 헤더 통계 업데이트
+            const totalScansElement = document.getElementById('total-scans');
+            if (totalScansElement) {
+                totalScansElement.textContent = (data.completed_scans || 0) + (data.active_scans || 0);
+            }
+
+            // 상태 그리드 업데이트
+            updateStatusGrid(data);
+        }
+
+        function updateStatusGrid(data) {
+            const statusItems = document.querySelectorAll('.status-grid .status-item .stat-value');
+            if (statusItems.length >= 4) {
+                statusItems[0].textContent = data.running_scans || 0;  // 실행 중
+                statusItems[1].textContent = data.completed_scans || 0; // 완료
+                statusItems[2].textContent = data.error_scans || 0;     // 오류
+                statusItems[3].textContent = data.pending_scans || 0;   // 대기
+            }
+        }
+
+        function loadRecentScans() {
+            const apiUrl = selectedDashboardProject 
+                ? `/api/projects/${selectedDashboardProject.id}/recent-scans`
+                : '/api/dashboard/recent-scans';
+            
+            fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                updateRecentScansList(data.scans || []);
+            })
+            .catch(error => {
+                console.error('최근 스캔 로드 실패:', error);
+                updateRecentScansList([]);
+            });
+        }
+
+        function updateRecentScansList(scans) {
+            const recentScansContainer = document.querySelector('.recent-scans-container');
+            if (!recentScansContainer) return;
+
+            if (scans.length === 0) {
+                recentScansContainer.innerHTML = `
+                    <div class="no-scans-message">
+                        <i class="fas fa-search"></i>
+                        <p>아직 스캔 기록이 없습니다.</p>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">스캐너에서 첫 번째 스캔을 실행해보세요!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            recentScansContainer.innerHTML = '';
+
+            scans.slice(0, 4).forEach(scan => {
+                const scanCard = createScanCard(scan);
+                recentScansContainer.appendChild(scanCard);
+            });
+        }
+
+        function createScanCard(scan) {
+            const scanCard = document.createElement('div');
+            scanCard.className = 'scan-card';
+            scanCard.onclick = () => showScanDetailFromDashboard(scan);
+
+            const timeAgo = getTimeAgo(scan.scan_date);
+            const project = projects.find(p => p.id == (scan.project_id || 1));
+            const projectName = project ? project.name : '기본 프로젝트';
+            const projectColor = project ? project.color : '#4fd1c7';
+
+            // JSON 파싱으로 실제 데이터 추출
+            let portsCount = 0;
+            let servicesCount = 0;
+            let vulnsCount = 0;
+
+            try {
+                const ports = typeof scan.ports === 'string' ? JSON.parse(scan.ports) : (scan.ports || []);
+                const services = typeof scan.services === 'string' ? JSON.parse(scan.services) : (scan.services || []);
+                const vulns = typeof scan.vulnerabilities === 'string' ? JSON.parse(scan.vulnerabilities) : (scan.vulnerabilities || []);
+                
+                portsCount = ports.length || scan.ports_count || 0;
+                servicesCount = services.length || 0;
+                vulnsCount = vulns.length || 0;
+            } catch (e) {
+                portsCount = scan.ports_count || 0;
+            }
+
+            const targetName = scan.domain || scan.subdomain || scan.ip_address || 'Unknown';
+            const targetIP = scan.ip_address && scan.domain ? scan.ip_address : '';
+
+            scanCard.innerHTML = `
+                <div class="scan-card-header">
+                    <div class="scan-target-info">
+                        <div class="scan-target-name">${targetName}</div>
+                        ${targetIP ? `<div class="scan-target-ip">${targetIP}</div>` : ''}
+                    </div>
+                    <span class="scan-project-badge" style="color: ${projectColor}; border-color: ${projectColor};">
+                        ${projectName}
+                    </span>
+                </div>
+
+                <div class="scan-card-details">
+                    <div class="scan-detail-item ports">
+                        <i class="fas fa-network-wired scan-detail-icon"></i>
+                        <div class="scan-detail-value">${portsCount}</div>
+                        <div class="scan-detail-label">포트</div>
+                    </div>
+                    <div class="scan-detail-item services">
+                        <i class="fas fa-cogs scan-detail-icon"></i>
+                        <div class="scan-detail-value">${servicesCount}</div>
+                        <div class="scan-detail-label">서비스</div>
+                    </div>
+                    <div class="scan-detail-item vulnerabilities">
+                        <i class="fas fa-shield-alt scan-detail-icon"></i>
+                        <div class="scan-detail-value">${vulnsCount}</div>
+                        <div class="scan-detail-label">취약점</div>
+                    </div>
+                </div>
+
+                <div class="scan-card-footer">
+                    <div class="scan-timestamp">
+                        <i class="fas fa-clock"></i>
+                        <span>${timeAgo}</span>
+                    </div>
+                    <span class="scan-status-badge scan-status-completed">완료</span>
+                </div>
+            `;
+
+            return scanCard;
+        }
+
+        function showScanDetailFromDashboard(scan) {
+            // 스캔 이력 페이지로 이동하거나 모달 표시
+            window.open('/scan-history', '_blank');
+        }
+
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) return '방금 전';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}분 전`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}시간 전`;
+            return `${Math.floor(diffInSeconds / 86400)}일 전`;
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                'completed': 'status-open',
+                'running': 'status-running',
+                'error': 'status-closed',
+                'pending': 'status-pending'
+            };
+            return statusMap[status] || 'status-open';
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'completed': '완료',
+                'running': '실행중',
+                'error': '오류',
+                'pending': '대기'
+            };
+            return statusMap[status] || '완료';
+        }
+
+        // Enter 키로 스캔 시작
+        const domainInput = document.getElementById('domain-input');
+        if (domainInput) {
+            domainInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    startScan();
+                }
+            });
+        }
 
     </script>
 </body>

@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>스캔 이력 - CyberScan Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0a0e27;
+            --secondary-bg: #1a1f3a;
+            --accent-bg: #2d3748;
+            --surface-bg: #1e2432;
+            --border-color: #2d3748;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --accent-blue: #4fd1c7;
+            --accent-purple: #9f7aea;
+            --accent-red: #fc8181;
+            --accent-green: #68d391;
+            --accent-yellow: #f6e05e;
+            --accent-orange: #ed8936;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #4fd1c7 0%, #9f7aea 100%);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-left p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .filters {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .filter-input,
+        .filter-select {
+            padding: 0.75rem;
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .filter-input:focus,
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(79, 209, 199, 0.1);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3bb8ae;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--surface-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-bg);
+            color: var(--text-primary);
+        }
+
+        .scan-list {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .scan-header {
+            background: var(--surface-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .scan-header h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .scan-count {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .scan-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .scan-table th,
+        .scan-table td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .scan-table th {
+            background: var(--surface-bg);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .scan-table tbody tr {
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .scan-table tbody tr:hover {
+            background: var(--surface-bg);
+        }
+
+        .scan-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .scan-target {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .scan-ip {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+
+        .project-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid;
+        }
+
+        .scan-date {
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .scan-time {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .ports-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ports-count {
+            background: rgba(79, 209, 199, 0.2);
+            color: var(--accent-blue);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .services-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .services-count {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .services-preview {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completed {
+            background: rgba(104, 211, 145, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .status-running {
+            background: rgba(246, 224, 94, 0.2);
+            color: var(--accent-yellow);
+            border: 1px solid var(--accent-yellow);
+        }
+
+        .status-error {
+            background: rgba(252, 129, 129, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 0.75rem;
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover {
+            background: var(--accent-bg);
+            color: var(--text-primary);
+        }
+
+        .pagination-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .pagination-info {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin: 0 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent-bg);
+        }
+
+        /* 상세 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--secondary-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--surface-bg);
+            color: var(--text-primary);
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                justify-content: center;
+            }
+
+            .filters-row {
+                grid-template-columns: 1fr;
+            }
+
+            .scan-table {
+                font-size: 0.875rem;
+            }
+
+            .scan-table th,
+            .scan-table td {
+                padding: 0.75rem 1rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <div class="header-left">
+                <h1>스캔 이력</h1>
+                <p>수행된 모든 스캔의 상세한 기록과 결과를 확인할 수 있습니다</p>
+            </div>
+            <div class="header-actions">
+                <a href="/" class="nav-btn">
+                    <i class="fas fa-home"></i>
+                    대시보드
+                </a>
+                <a href="/projects" class="nav-btn">
+                    <i class="fas fa-folder"></i>
+                    프로젝트 관리
+                </a>
+                <a href="/scanner" class="nav-btn">
+                    <i class="fas fa-search"></i>
+                    스캐너
+                </a>
+            </div>
+        </div>
+
+        <!-- 필터 -->
+        <div class="filters">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label class="filter-label">프로젝트</label>
+                    <select class="filter-select" id="projectFilter">
+                        <option value="">모든 프로젝트</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">타겟 검색</label>
+                    <input type="text" class="filter-input" id="targetFilter" placeholder="도메인, IP 주소 검색...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">상태</label>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">모든 상태</option>
+                        <option value="completed">완료</option>
+                        <option value="running">진행중</option>
+                        <option value="error">오류</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">기간</label>
+                    <select class="filter-select" id="dateFilter">
+                        <option value="">전체 기간</option>
+                        <option value="today">오늘</option>
+                        <option value="week">최근 7일</option>
+                        <option value="month">최근 30일</option>
+                    </select>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn btn-primary" onclick="applyFilters()">
+                        <i class="fas fa-search"></i>
+                        검색
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearFilters()">
+                        <i class="fas fa-undo"></i>
+                        초기화
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 스캔 목록 -->
+        <div class="scan-list">
+            <div class="scan-header">
+                <h3>스캔 기록</h3>
+                <span class="scan-count" id="scanCount">총 0개</span>
+            </div>
+            
+            <div id="scanTableContainer">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>스캔 이력을 불러오는 중...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination" id="pagination" style="display: none;">
+            <!-- JavaScript로 동적 생성 -->
+        </div>
+    </div>
+
+    <!-- 스캔 상세 모달 -->
+    <div class="modal" id="scanDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="scanDetailTitle">스캔 상세 정보</h2>
+                <button class="modal-close" onclick="closeScanDetailModal()">&times;</button>
+            </div>
+            <div id="scanDetailContent">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        let pageSize = 21;
+        let currentFilters = {};
+        let projects = [];
+        let allScans = [];
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 스캔 히스토리 페이지 로드 시작!');
+            console.log('🔧 IP 주소 교정 시스템 활성화');
+            
+            loadProjects();
+            loadScans();
+        });
+
+        // 프로젝트 목록 로드
+        async function loadProjects() {
+            try {
+                const response = await fetch('/api/projects');
+                projects = await response.json();
+                
+                const projectFilter = document.getElementById('projectFilter');
+                projectFilter.innerHTML = '<option value="">모든 프로젝트</option>';
+                
+                projects.forEach(project => {
+                    const option = document.createElement('option');
+                    option.value = project.id;
+                    option.textContent = project.name;
+                    option.style.color = project.color;
+                    projectFilter.appendChild(option);
+                });
+            } catch (error) {
+                console.error('프로젝트 로드 실패:', error);
+            }
+        }
+
+        // 스캔 목록 로드
+        async function loadScans() {
+            try {
+                showLoading();
+                
+                // API 요청 (필터 파라미터 포함)
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    limit: pageSize,
+                    ...currentFilters
+                });
+                
+                const response = await fetch(`/api/scans?${params}`);
+                const data = await response.json();
+                
+                console.log('📋 원본 API 데이터:', data.scans ? data.scans[0] : 'No data');
+                
+                // 데이터 교정: IP 주소 수정
+                allScans = (data.scans || []).map(scan => {
+                    const correctedScan = {...scan};
+                    
+                    // IP 주소가 JSON 형태로 잘못 되어있으면 수정
+                    if (typeof scan.ip_address === 'string' && scan.ip_address.includes('[{')) {
+                        console.log('❌ ID', scan.id, '잘못된 IP:', scan.ip_address.substring(0, 50) + '...');
+                        
+                        // subdomain에서 올바른 IP 추출
+                        if (scan.subdomain && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(scan.subdomain)) {
+                            correctedScan.ip_address = scan.subdomain;
+                            console.log('✅ ID', scan.id, 'IP 수정:', correctedScan.ip_address);
+                        } else {
+                            correctedScan.ip_address = 'N/A';
+                            console.log('⚠️ ID', scan.id, 'IP 추출 실패');
+                        }
+                    }
+                    
+                    return correctedScan;
+                });
+                
+                console.log('📊 수정 완료! 전체', allScans.length, '개 스캔');
+                totalPages = data.total_pages || 1;
+                
+                renderScanTable();
+                renderPagination();
+                updateScanCount(data.total_count || 0);
+                
+            } catch (error) {
+                console.error('스캔 목록 로드 실패:', error);
+                showError('스캔 목록을 불러오는데 실패했습니다.');
+            }
+        }
+
+        // 로딩 상태 표시
+        function showLoading() {
+            const container = document.getElementById('scanTableContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>스캔 이력을 불러오는 중...</p>
+                </div>
+            `;
+        }
+
+        // 에러 상태 표시
+        function showError(message) {
+            const container = document.getElementById('scanTableContainer');
+            container.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // 스캔 카드 그리드 렌더링
+        function renderScanTable() {
+            const container = document.getElementById('scanTableContainer');
+            
+            if (allScans.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <p>스캔 기록이 없습니다.</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">조건을 변경하거나 새로운 스캔을 실행해보세요.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const cardsHTML = `
+                <div class="scan-cards-grid">
+                    ${allScans.map(scan => createScanCard(scan)).join('')}
+                </div>
+            `;
+            
+            container.innerHTML = cardsHTML;
+        }
+
+        // 스캔 카드 생성
+        function createScanCard(scan) {
+            // 데이터 교정: API에서 잘못된 데이터를 반환할 경우 수정
+            let correctedScan = {...scan};
+            
+            // IP 주소가 JSON 형태로 잘못 되어있으면 subdomain에서 올바른 IP 가져오기
+            if (typeof scan.ip_address === 'string' && (scan.ip_address.includes('[{"port"') || scan.ip_address.includes('"protocol"'))) {
+                console.log('❌ 잘못된 IP 데이터 발견:', scan.id);
+                
+                // API 분석 결과: subdomain 필드에 올바른 IP가 들어있음!
+                if (scan.subdomain && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(scan.subdomain)) {
+                    correctedScan.ip_address = scan.subdomain;
+                    console.log('✅ subdomain에서 올바른 IP 추출:', correctedScan.ip_address);
+                } else {
+                    correctedScan.ip_address = 'N/A';
+                    console.log('⚠️ IP 추출 실패 - N/A로 표시');
+                }
+            }
+            
+            // 프로젝트 ID가 문자열로 잘못 되어있으면 수정
+            if (typeof scan.project_id === 'string' && scan.project_id === scan.domain) {
+                // 기본 프로젝트 ID를 1로 사용
+                correctedScan.project_id = 1;
+            }
+            
+            const project = projects.find(p => p.id === correctedScan.project_id);
+            const projectName = project ? project.name : '알 수 없음';
+            const projectColor = project ? project.color : '#4fd1c7';
+            
+            const scanDate = new Date(correctedScan.scan_date);
+            const ports = Array.isArray(correctedScan.ports) ? correctedScan.ports : JSON.parse(correctedScan.ports || '[]');
+            const services = Array.isArray(correctedScan.services) ? correctedScan.services : JSON.parse(correctedScan.services || '[]');
+            const vulnerabilities = Array.isArray(correctedScan.vulnerabilities) ? correctedScan.vulnerabilities : JSON.parse(correctedScan.vulnerabilities || '[]');
+            
+            const targetName = correctedScan.domain || correctedScan.subdomain || correctedScan.ip_address;
+            const targetIP = correctedScan.ip_address || '';
+            
+            const formattedDate = scanDate.toLocaleDateString('ko-KR', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            const formattedTime = scanDate.toLocaleTimeString('ko-KR', {
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+            
+            return `
+                <div class="scan-history-card" data-scan-id="${correctedScan.id}" onclick="showScanDetail(${correctedScan.id})">
+                    <div class="scan-card-top">
+                        <div class="scan-target-section">
+                            <div class="scan-target-main">${targetName}</div>
+                            ${targetIP ? `<div class="scan-target-sub">${targetIP}</div>` : ''}
+                        </div>
+                        <div class="scan-project-info">
+                            <span class="scan-project-tag" style="color: ${projectColor}; border-color: ${projectColor};">
+                                ${projectName}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="scan-metrics">
+                        <div class="metric-item ports">
+                            <i class="fas fa-network-wired metric-icon"></i>
+                            <div class="metric-value">${ports.length}</div>
+                            <div class="metric-label">포트</div>
+                        </div>
+                        <div class="metric-item services">
+                            <i class="fas fa-cogs metric-icon"></i>
+                            <div class="metric-value">${services.length}</div>
+                            <div class="metric-label">서비스</div>
+                        </div>
+                        <div class="metric-item vulnerabilities">
+                            <i class="fas fa-shield-alt metric-icon"></i>
+                            <div class="metric-value">${vulnerabilities.length}</div>
+                            <div class="metric-label">취약점</div>
+                        </div>
+                    </div>
+
+                    <div class="scan-card-bottom">
+                        <div class="scan-datetime">
+                            <div class="scan-date-main">${formattedDate}</div>
+                            <div class="scan-time-sub">${formattedTime}</div>
+                        </div>
+                        <div class="scan-status-indicator">
+                            <span class="status-dot"></span>
+                            <span class="status-text">완료</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 올바른 IP 주소를 가져오는 함수
+        async function fetchCorrectIPAddress(scanId) {
+            try {
+                // 데이터베이스에서 직접 올바른 데이터 가져오기
+                const response = await fetch(`/api/scans/${scanId}`);
+                if (!response.ok) return null;
+                
+                const data = await response.json();
+                console.log('데이터베이스 직접 조회 결과:', data);
+                
+                // subdomain 필드에서 IP 찾기
+                if (data.subdomain && data.subdomain !== data.domain && 
+                    /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(data.subdomain)) {
+                    return data.subdomain;
+                }
+                
+                return null;
+            } catch (error) {
+                console.error('올바른 IP 가져오기 실패:', error);
+                return null;
+            }
+        }
+        
+        // 카드의 IP 주소를 업데이트하는 함수
+        function updateScanCardIP(scanId, correctIP) {
+            const cards = document.querySelectorAll(`[data-scan-id="${scanId}"]`);
+            cards.forEach(card => {
+                const ipElements = card.querySelectorAll('.scan-target-sub');
+                ipElements.forEach(el => {
+                    if (el.textContent.includes('[{') || el.textContent === '로딩 중...') {
+                        el.textContent = correctIP;
+                    }
+                });
+            });
+        }
+        
+        // 상태별 CSS 클래스
+        function getStatusClass(status) {
+            const statusMap = {
+                'completed': 'status-completed',
+                'running': 'status-running',
+                'error': 'status-error'
+            };
+            return statusMap[status] || 'status-completed';
+        }
+
+        // 상태별 텍스트
+        function getStatusText(status) {
+            const statusMap = {
+                'completed': '완료',
+                'running': '진행중',
+                'error': '오류'
+            };
+            return statusMap[status] || '완료';
+        }
+
+        // 페이지네이션 렌더링
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            pagination.style.display = 'flex';
+            
+            let paginationHTML = '';
+            
+            // 이전 버튼
+            if (currentPage > 1) {
+                paginationHTML += `<button class="pagination-btn" onclick="goToPage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+            }
+            
+            // 페이지 번호
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === currentPage ? 'active' : '';
+                paginationHTML += `<button class="pagination-btn ${activeClass}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            
+            // 다음 버튼
+            if (currentPage < totalPages) {
+                paginationHTML += `<button class="pagination-btn" onclick="goToPage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+            }
+            
+            paginationHTML += `<span class="pagination-info">${currentPage} / ${totalPages} 페이지</span>`;
+            
+            pagination.innerHTML = paginationHTML;
+        }
+
+        // 스캔 개수 업데이트
+        function updateScanCount(total) {
+            document.getElementById('scanCount').textContent = `총 ${total.toLocaleString()}개`;
+        }
+
+        // 페이지 이동
+        function goToPage(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            loadScans();
+        }
+
+        // 필터 적용
+        function applyFilters() {
+            currentFilters = {
+                project_id: document.getElementById('projectFilter').value,
+                target: document.getElementById('targetFilter').value,
+                status: document.getElementById('statusFilter').value,
+                date_range: document.getElementById('dateFilter').value
+            };
+            
+            // 빈 값 제거
+            Object.keys(currentFilters).forEach(key => {
+                if (!currentFilters[key]) {
+                    delete currentFilters[key];
+                }
+            });
+            
+            currentPage = 1;
+            loadScans();
+        }
+
+        // 필터 초기화
+        function clearFilters() {
+            document.getElementById('projectFilter').value = '';
+            document.getElementById('targetFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            
+            currentFilters = {};
+            currentPage = 1;
+            loadScans();
+        }
+
+        // 스캔 상세 정보 모달
+        async function showScanDetail(scanId) {
+            try {
+                const response = await fetch(`/api/scans/${scanId}`);
+                const scan = await response.json();
+                
+                if (scan.error) {
+                    alert('스캔 정보를 불러오는데 실패했습니다.');
+                    return;
+                }
+                
+                renderScanDetailModal(scan);
+                document.getElementById('scanDetailModal').classList.add('show');
+                
+            } catch (error) {
+                console.error('스캔 상세 정보 로드 실패:', error);
+                alert('스캔 정보를 불러오는데 실패했습니다.');
+            }
+        }
+
+        // 스캔 상세 모달 렌더링
+        function renderScanDetailModal(scan) {
+            // 데이터 교정: API에서 잘못된 데이터를 반환할 경우 수정
+            let correctedScan = {...scan};
+            
+            // IP 주소가 JSON 형태로 잘못 되어있으면 수정
+            if (typeof scan.ip_address === 'string' && (scan.ip_address.includes('[{"port"') || scan.ip_address.includes('"protocol"'))) {
+                console.log('❌ 모달: 잘못된 IP 데이터 발견:', scan.id);
+                
+                // subdomain에서 올바른 IP 찾기
+                if (scan.subdomain && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(scan.subdomain)) {
+                    correctedScan.ip_address = scan.subdomain;
+                    console.log('✅ 모달: subdomain에서 IP 추출:', correctedScan.ip_address);
+                } else {
+                    correctedScan.ip_address = 'N/A';
+                }
+            }
+            
+            // 프로젝트 ID 교정
+            if (typeof scan.project_id === 'string' && scan.project_id === scan.domain) {
+                correctedScan.project_id = 1;
+            }
+            
+            const project = projects.find(p => p.id === correctedScan.project_id);
+            const ports = Array.isArray(correctedScan.ports) ? correctedScan.ports : JSON.parse(correctedScan.ports || '[]');
+            const services = Array.isArray(correctedScan.services) ? correctedScan.services : JSON.parse(correctedScan.services || '[]');
+            const vulnerabilities = Array.isArray(correctedScan.vulnerabilities) ? correctedScan.vulnerabilities : JSON.parse(correctedScan.vulnerabilities || '[]');
+            
+            document.getElementById('scanDetailTitle').textContent = 
+                `${correctedScan.domain || correctedScan.subdomain || correctedScan.ip_address} 스캔 결과`;
+            
+            const content = `
+                <div class="scan-detail-info">
+                    <div class="detail-section">
+                        <h4><i class="fas fa-info-circle"></i> 기본 정보</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">타겟</span>
+                                <span class="detail-value">${correctedScan.domain || correctedScan.subdomain || correctedScan.ip_address}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">IP 주소</span>
+                                <span class="detail-value">${correctedScan.ip_address || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">프로젝트</span>
+                                <span class="detail-value" style="color: ${project?.color || '#4fd1c7'}">${project?.name || '알 수 없음'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">스캔 일시</span>
+                                <span class="detail-value">${new Date(correctedScan.scan_date).toLocaleString('ko-KR')}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4><i class="fas fa-network-wired"></i> 포트 정보 (${ports.length}개)</h4>
+                        <div class="ports-list">
+                            ${ports.length > 0 ? ports.map(port => `
+                                <div class="port-item">
+                                    <span class="port-number">${port.port}</span>
+                                    <span class="port-protocol">${port.protocol || 'tcp'}</span>
+                                    <span class="port-state">${port.state || 'open'}</span>
+                                </div>
+                            `).join('') : '<p class="no-data">발견된 포트가 없습니다.</p>'}
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4><i class="fas fa-cogs"></i> 서비스 정보 (${services.length}개)</h4>
+                        <div class="services-list">
+                            ${services.length > 0 ? services.map(service => `
+                                <div class="service-item">
+                                    <div class="service-header">
+                                        <span class="service-name">${service.name || service.service || 'Unknown'}</span>
+                                        <span class="service-port">:${service.port}</span>
+                                    </div>
+                                    <div class="service-details">
+                                        ${service.version ? `<span class="service-version">${service.version}</span>` : ''}
+                                        ${service.product ? `<span class="service-product">${service.product}</span>` : ''}
+                                    </div>
+                                </div>
+                            `).join('') : '<p class="no-data">발견된 서비스가 없습니다.</p>'}
+                        </div>
+                    </div>
+
+                    ${vulnerabilities.length > 0 ? `
+                        <div class="detail-section">
+                            <h4><i class="fas fa-shield-alt"></i> 취약점 정보 (${vulnerabilities.length}개)</h4>
+                            <div class="vulnerabilities-list">
+                                ${vulnerabilities.map(vuln => `
+                                    <div class="vulnerability-item">
+                                        <div class="vuln-header">
+                                            <span class="vuln-name">${vuln.name || 'Unknown'}</span>
+                                            <span class="vuln-severity ${vuln.severity?.toLowerCase() || 'unknown'}">${vuln.severity || 'Unknown'}</span>
+                                        </div>
+                                        ${vuln.description ? `<div class="vuln-description">${vuln.description}</div>` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            document.getElementById('scanDetailContent').innerHTML = content;
+        }
+
+        // 스캔 상세 모달 닫기
+        function closeScanDetailModal() {
+            document.getElementById('scanDetailModal').classList.remove('show');
+        }
+
+        // 모달 외부 클릭 시 닫기
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('scanDetailModal');
+            if (e.target === modal) {
+                closeScanDetailModal();
+            }
+        });
+
+        // Enter 키로 검색
+        document.getElementById('targetFilter').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+    </script>
+
+    <style>
+        /* 스캔 상세 모달 추가 스타일 */
+        .scan-detail-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .detail-section {
+            background: var(--surface-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .detail-section h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+        }
+
+        .detail-section h4 i {
+            color: var(--accent-blue);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .ports-list,
+        .services-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .port-item {
+            background: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .port-number {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .port-protocol {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .port-state {
+            color: var(--accent-green);
+            font-size: 0.75rem;
+        }
+
+        .service-item {
+            background: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            min-width: 200px;
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .service-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .service-port {
+            color: var(--accent-blue);
+            font-size: 0.875rem;
+        }
+
+        .service-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+
+        .service-version,
+        .service-product {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .vulnerabilities-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .vulnerability-item {
+            background: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            padding: 1rem;
+        }
+
+        .vuln-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .vuln-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .vuln-severity {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .vuln-severity.high {
+            background: rgba(252, 129, 129, 0.2);
+            color: var(--accent-red);
+        }
+
+        .vuln-severity.medium {
+            background: rgba(237, 137, 54, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .vuln-severity.low {
+            background: rgba(246, 224, 94, 0.2);
+            color: var(--accent-yellow);
+        }
+
+        .vuln-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .no-data {
+            color: var(--text-secondary);
+            font-style: italic;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        /* 카드 그리드 레이아웃 */
+        .scan-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+
+        .scan-history-card {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-history-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .scan-history-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .scan-history-card:hover::before {
+            opacity: 1;
+        }
+
+        .scan-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .scan-target-section {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .scan-target-main {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            word-break: break-all;
+        }
+
+        .scan-target-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .scan-project-info {
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+
+        .scan-project-tag {
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+
+        .scan-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-item {
+            background: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-item:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .metric-icon {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-item.ports {
+            border-color: rgba(79, 209, 199, 0.3);
+        }
+
+        .metric-item.ports .metric-icon {
+            color: var(--accent-blue);
+        }
+
+        .metric-item.services {
+            border-color: rgba(104, 211, 145, 0.3);
+        }
+
+        .metric-item.services .metric-icon {
+            color: var(--accent-green);
+        }
+
+        .metric-item.vulnerabilities {
+            border-color: rgba(252, 129, 129, 0.3);
+        }
+
+        .metric-item.vulnerabilities .metric-icon {
+            color: var(--accent-red);
+        }
+
+        .scan-card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .scan-datetime {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+
+        .scan-date-main {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .scan-time-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .scan-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .status-text {
+            font-size: 0.8rem;
+            color: var(--accent-green);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* 반응형 카드 */
+        @media (max-width: 768px) {
+            .scan-cards-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .scan-card-top {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .scan-project-info {
+                margin-left: 0;
+                align-self: flex-start;
+            }
+
+            .scan-metrics {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</body>
+</html>

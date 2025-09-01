@@ -357,7 +357,7 @@ class APIRoutes:
     
     # 스캔 이력 API
     def get_scans(self):
-        """스캔 이력 조회 (필터링 및 페이지네이션 지원) - FIXED VERSION"""
+        """스캔 이력 조회 (필터링 및 페이지네이션 지원)"""
         try:
             import sqlite3
             import json
@@ -449,22 +449,16 @@ class APIRoutes:
                     services = []
                     vulnerabilities = []
                 
-                # DEBUG: 첫 번째 스캔에 대해 디버그 정보 출력
-                if len(scans) == 0:
-                    print(f"DEBUG get_scans: row[0]={row[0]}, row[1]={row[1]}, row[2]={row[2]}, row[3]={row[3]}")
-                    print(f"DEBUG get_scans: row[4]={str(row[4])[:50]}...")
-                    print(f"DEBUG get_scans: row[9]={row[9]}")
-                
                 scans.append({
                     'id': row[0],
                     'domain': row[1],
                     'subdomain': row[2],
-                    'ip_address': row[3],  # 이것이 올바른 IP여야 함
+                    'ip_address': row[3],
                     'ports': ports,
                     'services': services,
                     'vulnerabilities': vulnerabilities,
                     'scan_date': row[8],
-                    'project_id': row[9],  # 이것이 올바른 프로젝트 ID여야 함
+                    'project_id': row[9],
                     'status': 'completed',  # 기본 상태
                     'project_name': row[10],
                     'project_color': row[11]
@@ -485,8 +479,8 @@ class APIRoutes:
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
-    def get_scan_detail_old(self, scan_id: int):
-        """특정 스캔의 상세 정보 조회 (OLD VERSION)"""
+    def get_scan_detail(self, scan_id: int):
+        """특정 스캔의 상세 정보 조회"""
         try:
             import sqlite3
             import json
@@ -538,66 +532,6 @@ class APIRoutes:
             
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-    
-    def get_scan_detail(self, scan_id: int):
-        """특정 스캔의 상세 정보 조회 (FIXED VERSION)"""
-        print(f"DEBUG: get_scan_detail called with scan_id={scan_id}")
-        import sqlite3
-        import json
-        
-        try:
-            conn = sqlite3.connect(self.db.db_path)
-            cursor = conn.cursor()
-            
-            # Direct query with explicit field selection
-            cursor.execute(
-                'SELECT id, domain, subdomain, ip_address, ports, services, vulnerabilities, '
-                'poc_codes, scan_date, project_id FROM scan_results WHERE id = ?', 
-                (scan_id,)
-            )
-            
-            scan_row = cursor.fetchone()
-            if not scan_row:
-                conn.close()
-                return jsonify({'error': 'Scan not found'}), 404
-            
-            # Get project info separately
-            cursor.execute('SELECT name, color FROM projects WHERE id = ?', (scan_row[9],))
-            project_row = cursor.fetchone()
-            
-            # Parse JSON fields safely
-            try:
-                ports_data = json.loads(scan_row[4] or '[]')
-                services_data = json.loads(scan_row[5] or '[]') 
-                vulnerabilities_data = json.loads(scan_row[6] or '[]')
-            except (json.JSONDecodeError, TypeError):
-                ports_data = []
-                services_data = []
-                vulnerabilities_data = []
-            
-            # Build response with correct field mapping
-            response = {
-                'id': scan_row[0],
-                'domain': scan_row[1],
-                'subdomain': scan_row[2],
-                'ip_address': scan_row[3],  # This should be the actual IP
-                'ports': ports_data,  # Return as array, not JSON string
-                'services': services_data,
-                'vulnerabilities': vulnerabilities_data, 
-                'scan_date': scan_row[8],
-                'project_id': scan_row[9],
-                'status': 'completed',
-                'project_name': project_row[0] if project_row else 'Unknown',
-                'project_color': project_row[1] if project_row else '#4fd1c7'
-            }
-            
-            conn.close()
-            return jsonify(response)
-            
-        except Exception as e:
-            if 'conn' in locals():
-                conn.close()
-            return jsonify({'error': f'Database error: {str(e)}'}), 500
     
     def get_scan_detail_test(self, scan_id: int):
         """TEST: 테스트용 스캔 상세 정보 조회"""
