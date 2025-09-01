@@ -16,8 +16,9 @@ class HostScanner:
     def __init__(self):
         self.results = {}
     
-    def scan_host(self, host: str) -> Dict[str, Any]:
+    def scan_host(self, host: str, settings: Dict = None) -> Dict[str, Any]:
         """FastNmap 스캔 수행"""
+        settings = settings or {}
         print(f"FastNmap 스캔 시작: {host}")
         
         try:
@@ -25,8 +26,9 @@ class HostScanner:
             ip_address = socket.gethostbyname(host)
             print(f"대상 IP: {ip_address}")
             
-            # FastNmap 2단계 스캔
-            nmap_results = PortScanner().run_nmap_scan(host)
+            # FastNmap 2단계 스캔 (설정 적용)
+            port_scanner = PortScanner()
+            nmap_results = port_scanner.run_nmap_scan(host, settings)
             ports = nmap_results.get('ports', [])
             services = nmap_results.get('services', [])
             
@@ -75,9 +77,10 @@ class HostScanner:
                 }
             }
     
-    def scan_target(self, target: str) -> Dict[str, Any]:
+    def scan_target(self, target: str, settings: Dict = None) -> Dict[str, Any]:
         """단일 타겟에 대한 FastNmap 스캔"""
-        return self.scan_host(target)
+        settings = settings or {}
+        return self.scan_host(target, settings)
 
 
 class PortScanner:
@@ -91,16 +94,19 @@ class PortScanner:
             8443: 'https-alt'
         }
     
-    def run_nmap_scan(self, host: str) -> Dict[str, List]:
+    def run_nmap_scan(self, host: str, settings: Dict = None) -> Dict[str, List]:
         """FastNmap 2단계 스캔 실행"""
+        settings = settings or {}
         results = {'ports': [], 'services': []}
         
         try:
             print(f"FastNmap 2단계 스캔 시작: {host}")
             
-            # 1단계: 전체 포트 빠른 스캔 (모든 포트 1-65535)
-            print("1단계: 전체 포트 빠른 스캔 중...")
-            stage1_cmd = ['nmap', '-p-', '--min-rate=1000', '-T4', host]
+            # 설정 기반 1단계 명령어 생성
+            stage1_cmd = self._build_stage1_command(host, settings)
+            
+            # 1단계: 포트 탐지 스캔
+            print("1단계: 포트 탐지 스캔 중...")
             
             try:
                 stage1_result = subprocess.run(stage1_cmd, capture_output=True, text=True, timeout=600)
@@ -146,13 +152,9 @@ class PortScanner:
             if open_ports:
                 print(f"2단계: {len(open_ports)}개 포트 상세 분석 중...")
                 port_list = ','.join(map(str, open_ports))
-                # Windows에서 권한 문제 해결을 위해 -sS 대신 -sT 사용 고려  
-                if platform.system().lower() == 'windows':
-                    stage2_cmd = ['nmap', '-sT', '-sV', '-sC', '-T4', '-p', port_list, host]
-                else:
-                    stage2_cmd = ['nmap', '-sCV', '-T4', '-p', port_list, host]
                 
-                print(f"2단계 명령어: {' '.join(stage2_cmd)}")
+                # 설정 기반 2단계 명령어 생성
+                stage2_cmd = self._build_stage2_command(host, port_list, settings)
                 try:
                     # 동적 timeout: 포트 수에 따라 조정 (포트당 약 5-8초)
                     base_timeout = 600  # 기본 10분
@@ -279,5 +281,88 @@ class PortScanner:
     def get_service_name(self, port: int) -> str:
         """포트 번호로 서비스명 조회"""
         return self.service_map.get(port, 'unknown')
+    
+    def _build_stage1_command(self, host: str, settings: Dict) -> List[str]:
+        """1단계 스캔 명령어 생성"""
+        cmd = ['nmap']
+        
+        # 포트 범위 설정
+        port_range = settings.get('portRange', 'common')
+        if port_range == 'top100':
+            cmd.extend(['--top-ports', '100'])
+        elif port_range == 'top1000':
+            cmd.extend(['--top-ports', '1000'])
+        elif port_range == 'all':
+            cmd.append('-p-')
+        elif port_range == 'common':
+            cmd.append('-F')
+        else:  # 기본값
+            cmd.append('-p-')
+            
+        # 스캔 속도
+        speed = settings.get('speed', 'T4')
+        cmd.append(f'-{speed}')
+        
+        # 성능 설정
+        min_rate = settings.get('minRate', '1000')
+        cmd.extend(['--min-rate', min_rate])
+        
+        max_rtt = settings.get('maxRtt', '200')
+        cmd.extend(['--max-rtt-timeout', f'{max_rtt}ms'])
+        
+        host_timeout = settings.get('hostTimeout', '30')
+        cmd.extend(['--host-timeout', f'{host_timeout}m'])
+        
+        cmd.append(host)
+        return cmd
+    
+    def _build_stage2_command(self, host: str, port_list: str, settings: Dict) -> List[str]:
+        """2단계 스캔 명령어 생성"""
+        cmd = ['nmap']
+        
+        # Windows/Linux 플랫폼별 스캔 타입
+        if platform.system().lower() == 'windows':
+            cmd.append('-sT')
+        else:
+            cmd.append('-sS')
+            
+        # 서비스 탐지
+        service_detection = settings.get('serviceDetection', 'version')
+        if service_detection == 'version':
+            cmd.append('-sV')
+        elif service_detection == 'aggressive':
+            cmd.extend(['-sV', '--version-intensity', '9'])
+        elif service_detection != 'none':
+            cmd.append('-sV')
+            
+        # 스크립트 스캔
+        script_scan = settings.get('scriptScan', 'default')
+        if script_scan == 'default':
+            cmd.append('-sC')
+        elif script_scan == 'vuln':
+            cmd.extend(['--script', 'vuln'])
+        elif script_scan == 'all':
+            cmd.extend(['--script', 'all'])
+            
+        # OS 탐지
+        os_detection = settings.get('osDetection', 'none')
+        if os_detection == 'basic':
+            cmd.append('-O')
+        elif os_detection == 'aggressive':
+            cmd.extend(['-O', '--osscan-guess'])
+            
+        # 스캔 속도
+        speed = settings.get('speed', 'T4')
+        cmd.append(f'-{speed}')
+        
+        # 포트 지정
+        cmd.extend(['-p', port_list])
+        
+        # 성능 설정
+        max_rtt = settings.get('maxRtt', '200')
+        cmd.extend(['--max-rtt-timeout', f'{max_rtt}ms'])
+        
+        cmd.append(host)
+        return cmd
 
 

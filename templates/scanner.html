@@ -676,62 +676,177 @@
         <!-- 스캐너 카드 -->
         <div class="scanner-card">
             <form id="scanForm">
-                <div class="input-group">
-                    <label for="targets">스캔 대상 <span style="color: var(--accent-red);">*</span></label>
-                    <textarea 
-                        id="targets" 
-                        name="targets" 
-                        class="input-field textarea-field" 
-                        placeholder="스캔할 도메인 또는 IP 주소를 입력하세요 (한 줄에 하나씩)&#10;&#10;예시:&#10;example.com&#10;192.168.1.1&#10;subdomain.example.org&#10;10.0.0.1"
-                        required
-                    ></textarea>
-                </div>
-
+                <!-- 스캔 모드 선택 -->
                 <div class="scan-options">
                     <div class="option-card selected" data-mode="single">
                         <input type="radio" name="scan_mode" value="single" checked>
-                        <h3><i class="fas fa-bullseye"></i> 단일 스캔</h3>
+                        <h3><i class="fas fa-bullseye"></i> 단일 스캔 모드</h3>
                         <p>하나의 대상에 대해 상세한 FastNmap 2단계 스캔을 수행합니다. 포트 탐지, 서비스 식별, 버전 탐지를 포함합니다.</p>
                     </div>
                     <div class="option-card" data-mode="bulk">
                         <input type="radio" name="scan_mode" value="bulk">
-                        <h3><i class="fas fa-layer-group"></i> 대량 스캔</h3>
+                        <h3><i class="fas fa-layer-group"></i> 대량 스캔 모드</h3>
                         <p>여러 대상을 동시에 스캔하여 빠른 개요를 제공합니다. 네트워크 전체의 보안 상태를 빠르게 파악할 수 있습니다.</p>
                     </div>
                 </div>
 
-                <!-- 고급 설정 -->
+                <!-- 단일 스캔 입력 -->
+                <div class="single-scan-input" id="singleScanInput">
+                    <div class="input-group">
+                        <label for="singleTarget">스캔 대상 <span style="color: var(--accent-red);">*</span></label>
+                        <input 
+                            type="text" 
+                            id="singleTarget" 
+                            name="singleTarget" 
+                            class="input-field" 
+                            placeholder="스캔할 도메인 또는 IP 주소를 입력하세요 (예: example.com, 192.168.1.1)"
+                        />
+                    </div>
+                    <div class="input-group">
+                        <label for="singleDescription">스캔 설명 (선택사항)</label>
+                        <input 
+                            type="text" 
+                            id="singleDescription" 
+                            name="singleDescription" 
+                            class="input-field" 
+                            placeholder="이 스캔에 대한 간단한 설명을 입력하세요"
+                        />
+                    </div>
+                    
+                </div>
+
+                <!-- 대량 스캔 입력 -->
+                <div class="bulk-scan-input" id="bulkScanInput" style="display: none;">
+                    <div class="input-group">
+                        <label for="bulkTargets">스캔 대상 목록 <span style="color: var(--accent-red);">*</span></label>
+                        <textarea 
+                            id="bulkTargets" 
+                            name="bulkTargets" 
+                            class="input-field textarea-field" 
+                            placeholder="스캔할 도메인 또는 IP 주소를 입력하세요 (한 줄에 하나씩)&#10;&#10;예시:&#10;example.com&#10;192.168.1.1&#10;subdomain.example.org&#10;10.0.0.1&#10;&#10;최대 50개까지 입력 가능"
+                            rows="8"
+                        ></textarea>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="bulkDescription">배치 스캔 설명 (선택사항)</label>
+                        <input 
+                            type="text" 
+                            id="bulkDescription" 
+                            name="bulkDescription" 
+                            class="input-field" 
+                            placeholder="이 배치 스캔에 대한 설명을 입력하세요"
+                        />
+                    </div>
+
+
+                    <!-- 대상 수 표시 -->
+                    <div class="target-counter" id="targetCounter">
+                        <div style="display: flex; justify-content: between; align-items: center; padding: 1rem; background: var(--surface-bg); border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <span style="color: var(--text-secondary);">스캔 대상 수:</span>
+                            <span id="targetCount" style="color: var(--accent-blue); font-weight: 600;">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 통합 스캔 설정 -->
                 <div class="advanced-settings">
                     <button type="button" class="advanced-toggle" id="advancedToggle">
                         <i class="fas fa-chevron-right" id="advancedIcon"></i>
-                        고급 설정
+                        스캔 설정
                     </button>
                     <div class="advanced-content" id="advancedContent">
-                        <div class="setting-group">
-                            <label>스캔 속도</label>
-                            <select id="scanSpeed">
-                                <option value="T3">보통 (T3)</option>
-                                <option value="T2">느림 (T2)</option>
-                                <option value="T4" selected>빠름 (T4)</option>
-                                <option value="T5">매우 빠름 (T5)</option>
-                            </select>
-                        </div>
+                        <!-- 포트 및 스캔 범위 -->
                         <div class="setting-group">
                             <label>포트 범위</label>
                             <select id="portRange">
-                                <option value="top1000">상위 1000개 포트</option>
-                                <option value="all" selected>모든 포트 (1-65535)</option>
-                                <option value="common">일반 포트</option>
+                                <option value="top100">상위 100개 포트 (초고속)</option>
+                                <option value="top1000">상위 1000개 포트 (빠름)</option>
+                                <option value="common" selected>일반 포트 (권장)</option>
+                                <option value="all">모든 포트 1-65535 (완전)</option>
                                 <option value="custom">사용자 정의</option>
                             </select>
                         </div>
+                        
+                        <!-- 서비스 탐지 -->
                         <div class="setting-group">
-                            <label>최소 전송률</label>
-                            <input type="number" id="minRate" value="1000" min="1" max="10000">
+                            <label>서비스 탐지</label>
+                            <select id="serviceDetection">
+                                <option value="none">사용 안함</option>
+                                <option value="basic">기본 서비스 탐지</option>
+                                <option value="version" selected>버전 탐지 포함</option>
+                                <option value="aggressive">공격적 탐지</option>
+                            </select>
                         </div>
+                        
+                        <!-- 스크립트 스캔 -->
                         <div class="setting-group">
-                            <label>최대 RTT</label>
-                            <input type="number" id="maxRtt" value="200" min="10" max="5000">
+                            <label>스크립트 스캔</label>
+                            <select id="scriptScan">
+                                <option value="none">사용 안함</option>
+                                <option value="default" selected>기본 스크립트</option>
+                                <option value="vuln">취약점 스크립트</option>
+                                <option value="all">모든 스크립트</option>
+                            </select>
+                        </div>
+                        
+                        <!-- OS 탐지 -->
+                        <div class="setting-group">
+                            <label>OS 탐지</label>
+                            <select id="osDetection">
+                                <option value="none" selected>사용 안함</option>
+                                <option value="basic">기본 OS 탐지</option>
+                                <option value="aggressive">공격적 OS 탐지</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 스캔 속도 -->
+                        <div class="setting-group">
+                            <label>스캔 속도</label>
+                            <select id="scanSpeed">
+                                <option value="T2">매우 느림 (T2) - 스텔스</option>
+                                <option value="T3">보통 (T3) - 일반적</option>
+                                <option value="T4" selected>빠름 (T4) - 공격적</option>
+                                <option value="T5">매우 빠름 (T5) - 위험</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 대량 스캔 전용 옵션 (동적으로 표시) -->
+                        <div id="bulkOnlySettings" style="display: none;">
+                            <div class="setting-group">
+                                <label>동시 스캔 수</label>
+                                <select id="concurrency">
+                                    <option value="1">1개 (안전)</option>
+                                    <option value="3" selected>3개 (권장)</option>
+                                    <option value="5">5개 (빠름)</option>
+                                    <option value="10">10개 (위험)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label>실패 시 동작</label>
+                                <select id="failAction">
+                                    <option value="continue" selected>계속 진행</option>
+                                    <option value="retry">재시도 후 진행</option>
+                                    <option value="stop">즉시 중단</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 네트워크 성능 설정 -->
+                        <div class="setting-group">
+                            <label>최소 전송률 (pps)</label>
+                            <input type="number" id="minRate" value="1000" min="100" max="10000" step="100">
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label>최대 RTT 타임아웃 (ms)</label>
+                            <input type="number" id="maxRtt" value="200" min="50" max="5000" step="50">
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label>호스트 타임아웃 (분)</label>
+                            <input type="number" id="hostTimeout" value="30" min="1" max="120">
                         </div>
                     </div>
                 </div>
@@ -805,7 +920,13 @@
                         document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
                         card.classList.add('selected');
                         card.querySelector('input').checked = true;
+                        this.toggleScanInputs(card.dataset.mode);
                     });
+                });
+
+                // 대량 스캔 대상 수 카운터
+                document.getElementById('bulkTargets').addEventListener('input', (e) => {
+                    this.updateTargetCount();
                 });
 
                 // 초기화 버튼
@@ -845,16 +966,32 @@
             }
 
             async startScan() {
-                const targets = document.getElementById('targets').value.trim();
                 const scanMode = document.querySelector('input[name="scan_mode"]:checked').value;
                 const projectId = document.getElementById('projectSelect').value;
                 
-                if (!targets) {
-                    this.showMessage('스캔 대상을 입력해주세요.', 'error');
-                    return;
-                }
+                let targets, targetList, description;
 
-                const targetList = targets.split('\n').filter(t => t.trim()).map(t => t.trim());
+                if (scanMode === 'single') {
+                    targets = document.getElementById('singleTarget').value.trim();
+                    description = document.getElementById('singleDescription').value.trim();
+                    
+                    if (!targets) {
+                        this.showMessage('스캔 대상을 입력해주세요.', 'error');
+                        return;
+                    }
+                    
+                    targetList = [targets];
+                } else {
+                    targets = document.getElementById('bulkTargets').value.trim();
+                    description = document.getElementById('bulkDescription').value.trim();
+                    
+                    if (!targets) {
+                        this.showMessage('스캔 대상을 입력해주세요.', 'error');
+                        return;
+                    }
+                    
+                    targetList = targets.split('\n').filter(t => t.trim()).map(t => t.trim());
+                }
                 
                 if (targetList.length === 0) {
                     this.showMessage('유효한 스캔 대상을 입력해주세요.', 'error');
@@ -874,13 +1011,31 @@
                     this.startTime = Date.now();
                     this.startTimer();
 
-                    // 고급 설정 수집
-                    const advancedSettings = {
-                        speed: document.getElementById('scanSpeed').value,
+                    // 통합 스캔 설정 수집
+                    const scanSettings = {
+                        // 기본 정보
+                        mode: scanMode,
+                        description: description,
+                        
+                        // 스캔 범위 및 깊이
                         portRange: document.getElementById('portRange').value,
+                        serviceDetection: document.getElementById('serviceDetection').value,
+                        scriptScan: document.getElementById('scriptScan').value,
+                        osDetection: document.getElementById('osDetection').value,
+                        
+                        // 성능 설정
+                        speed: document.getElementById('scanSpeed').value,
                         minRate: document.getElementById('minRate').value,
-                        maxRtt: document.getElementById('maxRtt').value
+                        maxRtt: document.getElementById('maxRtt').value,
+                        hostTimeout: document.getElementById('hostTimeout').value,
+                        
+                        // 대량 스캔 전용 설정
+                        ...(scanMode === 'bulk' && {
+                            concurrency: document.getElementById('concurrency').value,
+                            failAction: document.getElementById('failAction').value
+                        })
                     };
+
 
                     // 스캔 시작 요청
                     const response = await fetch('/scan', {
@@ -892,7 +1047,7 @@
                             targets: targetList,
                             bulk_mode: scanMode === 'bulk',
                             project_id: projectId || null,
-                            settings: advancedSettings
+                            settings: scanSettings
                         })
                     });
 
@@ -1147,8 +1302,46 @@
                 }
             }
 
+            toggleScanInputs(mode) {
+                const singleInput = document.getElementById('singleScanInput');
+                const bulkInput = document.getElementById('bulkScanInput');
+                const bulkOnlySettings = document.getElementById('bulkOnlySettings');
+                
+                if (mode === 'single') {
+                    singleInput.style.display = 'block';
+                    bulkInput.style.display = 'none';
+                    bulkOnlySettings.style.display = 'none';
+                } else {
+                    singleInput.style.display = 'none';
+                    bulkInput.style.display = 'block';
+                    bulkOnlySettings.style.display = 'block';
+                    this.updateTargetCount();
+                }
+            }
+
+            updateTargetCount() {
+                const targets = document.getElementById('bulkTargets').value.trim();
+                const targetList = targets ? targets.split('\n').filter(t => t.trim()).length : 0;
+                document.getElementById('targetCount').textContent = targetList;
+                
+                // 색상 변경
+                const counter = document.getElementById('targetCount');
+                if (targetList > 20) {
+                    counter.style.color = 'var(--accent-red)';
+                } else if (targetList > 10) {
+                    counter.style.color = 'var(--accent-yellow)';
+                } else {
+                    counter.style.color = 'var(--accent-blue)';
+                }
+            }
+
             clearResults() {
-                document.getElementById('targets').value = '';
+                // 입력 필드 초기화
+                document.getElementById('singleTarget').value = '';
+                document.getElementById('singleDescription').value = '';
+                document.getElementById('bulkTargets').value = '';
+                document.getElementById('bulkDescription').value = '';
+                
                 document.getElementById('messageContainer').innerHTML = '';
                 document.getElementById('resultsContainer').style.display = 'none';
                 document.getElementById('progressContainer').style.display = 'none';
@@ -1158,12 +1351,23 @@
                 document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
                 document.querySelector('.option-card[data-mode="single"]').classList.add('selected');
                 document.querySelector('input[value="single"]').checked = true;
+                this.toggleScanInputs('single');
 
-                // 고급 설정 초기화
+                // 통합 스캔 설정 초기화
+                document.getElementById('portRange').value = 'common';
+                document.getElementById('serviceDetection').value = 'version';
+                document.getElementById('scriptScan').value = 'default';
+                document.getElementById('osDetection').value = 'none';
                 document.getElementById('scanSpeed').value = 'T4';
-                document.getElementById('portRange').value = 'all';
                 document.getElementById('minRate').value = '1000';
                 document.getElementById('maxRtt').value = '200';
+                document.getElementById('hostTimeout').value = '30';
+                
+                // 대량 스캔 전용 설정 초기화
+                document.getElementById('concurrency').value = '3';
+                document.getElementById('failAction').value = 'continue';
+
+                this.updateTargetCount();
 
                 if (this.scanInterval) {
                     this.stopProgressMonitoring();

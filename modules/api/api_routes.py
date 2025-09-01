@@ -273,7 +273,7 @@ class APIRoutes:
             targets = data.get('targets')
             project_id = data.get('project_id')
             bulk_mode = data.get('bulk_mode', False)
-            
+            settings = data.get('settings', {})
             
             # 하위 호환성을 위해 기존 'domain' 필드도 지원
             if not targets and data.get('domain'):
@@ -303,18 +303,19 @@ class APIRoutes:
                 'project_id': project_id,
                 'completed_count': 0,
                 'total_count': len(valid_targets),
+                'settings': settings  # 설정 저장
             }
             
-            # 스캔 스레드 시작
+            # 스캔 스레드 시작 (설정 포함)
             if bulk_mode:
                 thread = threading.Thread(
                     target=self.scanner_manager.perform_bulk_scan, 
-                    args=(scan_id, valid_targets, project_id)
+                    args=(scan_id, valid_targets, project_id, settings)
                 )
             else:
                 thread = threading.Thread(
                     target=self.scanner_manager.perform_single_scan, 
-                    args=(scan_id, valid_targets, project_id)
+                    args=(scan_id, valid_targets, project_id, settings)
                 )
             
             thread.daemon = True
@@ -663,7 +664,7 @@ class ScanManager:
     def __init__(self):
         self.results = {}
     
-    def perform_single_scan(self, scan_id: str, targets: List[str], project_id: Optional[int] = None):
+    def perform_single_scan(self, scan_id: str, targets: List[str], project_id: Optional[int] = None, settings: Dict = None):
         """단일 타겟 스캔"""
         from ..database import DatabaseManager
         from ..utils import ValidationUtils
@@ -675,6 +676,8 @@ class ScanManager:
         target_type = 'ip' if validator.is_valid_ip(target) else 'domain'
         
         try:
+            settings = settings or {}
+            
             self.results[scan_id]['status'] = 'running'
             self.results[scan_id]['progress'] = 10
             
@@ -682,10 +685,11 @@ class ScanManager:
             from ..scanner import HostScanner
             scanner = HostScanner()
             
-            # 입력된 타겟만 직접 스캔 (서브도메인 탐색 제거)
+            # 설정을 스캐너에 전달
             self.results[scan_id]['progress'] = 30
-            host_results = scanner.scan_target(target)
+            host_results = scanner.scan_target(target, settings)
             self.results[scan_id]['results'][target] = host_results
+            
             self.results[scan_id]['progress'] = 90
             
             db.save_scan_results(target, self.results[scan_id]['results'], project_id)
@@ -697,13 +701,15 @@ class ScanManager:
             self.results[scan_id]['status'] = 'error'
             self.results[scan_id]['error'] = str(e)
     
-    def perform_bulk_scan(self, scan_id: str, targets: List[str], project_id: Optional[int] = None):
+    def perform_bulk_scan(self, scan_id: str, targets: List[str], project_id: Optional[int] = None, settings: Dict = None):
         """대량 타겟 스캔"""
         from ..database import DatabaseManager
         
         db = DatabaseManager()
         
         try:
+            settings = settings or {}
+            
             self.results[scan_id]['status'] = 'running'
             self.results[scan_id]['progress'] = 5
             self.results[scan_id]['target_status'] = {}
@@ -763,4 +769,63 @@ class ScanManager:
         except Exception as e:
             self.results[scan_id]['status'] = 'error'
             self.results[scan_id]['error'] = str(e)
+    
+    def _build_scan_command(self, settings: Dict, target: str) -> str:
+        """설정을 기반으로 nmap 명령어 생성 (디버그용)"""
+        command = ["nmap"]
+        
+        # 포트 범위 설정
+        port_range = settings.get('portRange', 'common')
+        if port_range == 'top100':
+            command.append('--top-ports 100')
+        elif port_range == 'top1000':
+            command.append('--top-ports 1000')
+        elif port_range == 'all':
+            command.append('-p-')
+        elif port_range == 'common':
+            command.append('-F')
+            
+        # 스캔 속도
+        speed = settings.get('speed', 'T4')
+        command.append(f'-{speed}')
+        
+        # 서비스 탐지
+        service_detection = settings.get('serviceDetection', 'version')
+        if service_detection == 'version':
+            command.append('-sV')
+        elif service_detection == 'aggressive':
+            command.append('-sV --version-intensity 9')
+        elif service_detection == 'basic':
+            command.append('-sS')
+            
+        # 스크립트 스캔
+        script_scan = settings.get('scriptScan', 'default')
+        if script_scan == 'default':
+            command.append('-sC')
+        elif script_scan == 'vuln':
+            command.append('--script vuln')
+        elif script_scan == 'all':
+            command.append('--script all')
+            
+        # OS 탐지
+        os_detection = settings.get('osDetection', 'none')
+        if os_detection == 'basic':
+            command.append('-O')
+        elif os_detection == 'aggressive':
+            command.append('-O --osscan-guess')
+            
+        # 성능 설정
+        min_rate = settings.get('minRate', '1000')
+        command.append(f'--min-rate {min_rate}')
+        
+        max_rtt = settings.get('maxRtt', '200')
+        command.append(f'--max-rtt-timeout {max_rtt}ms')
+        
+        host_timeout = settings.get('hostTimeout', '30')
+        command.append(f'--host-timeout {host_timeout}m')
+        
+        # 대상 추가
+        command.append(target)
+        
+        return ' '.join(command)
     
